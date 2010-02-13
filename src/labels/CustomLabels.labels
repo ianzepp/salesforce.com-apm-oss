@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Common_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Action</shortDescription>
+        <value>Action</value>
+    </labels>
+    <labels>
+        <fullName>Common_AllIsGood</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_AllIsGood</shortDescription>
+        <value>All is good!</value>
+    </labels>
+    <labels>
+        <fullName>Common_AreYouSure</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_AreYouSure</shortDescription>
+        <value>Are you sure?</value>
+    </labels>
+    <labels>
+        <fullName>Common_Cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>Common_ChangesSuccessfullySaved</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_ChangesSuccessfullySaved</shortDescription>
+        <value>Changes were successfully saved.</value>
+    </labels>
+    <labels>
+        <fullName>Common_DeleteShort</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_DeleteShort</shortDescription>
+        <value>Del</value>
+    </labels>
+    <labels>
+        <fullName>Common_Edit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Edit</shortDescription>
+        <value>Edit</value>
+    </labels>
+    <labels>
+        <fullName>Common_New</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_New</shortDescription>
+        <value>New</value>
+    </labels>
+    <labels>
+        <fullName>Common_NoRecordsToDisplay</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_NoRecordsToDisplay</shortDescription>
+        <value>No records to display.</value>
+    </labels>
+    <labels>
+        <fullName>Common_Notice</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Notice</shortDescription>
+        <value>Notice</value>
+    </labels>
+    <labels>
+        <fullName>Common_PageIsDisabled</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_PageIsDisabled</shortDescription>
+        <value>This page has been disabled, and is not available for use in this release.</value>
+    </labels>
+    <labels>
+        <fullName>Common_Remove</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Remove</shortDescription>
+        <value>Remove</value>
+    </labels>
+    <labels>
+        <fullName>Common_Save</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Save</shortDescription>
+        <value>Save</value>
+    </labels>
+    <labels>
+        <fullName>Common_SaveAndNew</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_SaveAndNew</shortDescription>
+        <value>Save &amp; New</value>
+    </labels>
+    <labels>
+        <fullName>Common_SaveAndReturn</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_SaveAndReturn</shortDescription>
+        <value>Save &amp; Return</value>
+    </labels>
+    <labels>
+        <fullName>Common_Warning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Common_Warning</shortDescription>
+        <value>Warning</value>
+    </labels>
+    <labels>
+        <fullName>Sprint_AssignCaseToSprint</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sprint_AssignCaseToSprint</shortDescription>
+        <value>Assign an existing Case to this Sprint</value>
+    </labels>
+    <labels>
+        <fullName>Sprint_ErrorCannotDeleteIfWorkstreamActive</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sprint_ErrorCannotDeleteIfWorkstreamActive</shortDescription>
+        <value>Unable to delete a General Backlog Sprint if the related Workstream is still active.</value>
+    </labels>
+    <labels>
+        <fullName>Sprint_ManageStories</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sprint_ManageStories</shortDescription>
+        <value>Manage Stories</value>
+    </labels>
+    <labels>
+        <fullName>Sprint_ManageTaskboard</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sprint_ManageTaskboard</shortDescription>
+        <value>Manage Taskboard</value>
+    </labels>
+    <labels>
+        <fullName>Sprint_ManageTasks</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sprint_ManageTasks</shortDescription>
+        <value>Manage Tasks</value>
+    </labels>
+    <labels>
+        <fullName>Sprint_ManageUsers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sprint_ManageUsers</shortDescription>
+        <value>Manage Users</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_AssignCaseToWorkstream</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_AssignCaseToWorkstream</shortDescription>
+        <value>Assign an existing Case to this Workstream</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_ExistingRoles</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_ExistingRoles</shortDescription>
+        <value>Existing Roles</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_IsNotActive</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_IsNotActive</shortDescription>
+        <value>This Workstream is not active.</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_ManageCases</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_ManageCases</shortDescription>
+        <value>Manage Cases</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_ManageRoles</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_ManageRoles</shortDescription>
+        <value>Manage Roles</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_ManageUsers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_ManageUsers</shortDescription>
+        <value>Manage Users</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_NoCasesAssigned</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_NoCasesAssigned</shortDescription>
+        <value>You have not yet assigned any Cases to this Workstream.</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_NoUsersAssigned</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_NoUsersAssigned</shortDescription>
+        <value>You have no Users with dedicated time assigned to this Workstream.</value>
+    </labels>
+    <labels>
+        <fullName>Workstream_UnresolvedCases</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workstream_UnresolvedCases</shortDescription>
+        <value>You have unresolved Cases...</value>
+    </labels>
+</CustomLabels>

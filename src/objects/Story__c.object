@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableActivities>true</enableActivities>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>ActualHours__c</fullName>
+        <label>Actual Hours</label>
+        <summarizedField>Task__c.ActualHours__c</summarizedField>
+        <summaryForeignKey>Task__c.Story__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>ApprovalStatus__c</fullName>
+        <label>Approval Status</label>
+        <picklist>
+            <controllingField>TaskStatus__c</controllingField>
+            <picklistValues>
+                <fullName>Not Yet Started</fullName>
+                <controllingFieldValues>Blocked</controllingFieldValues>
+                <controllingFieldValues>Completed</controllingFieldValues>
+                <controllingFieldValues>In Progress</controllingFieldValues>
+                <controllingFieldValues>Not Yet Started</controllingFieldValues>
+                <controllingFieldValues>Not Yet Tasked</controllingFieldValues>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <controllingFieldValues>Completed</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Completed</fullName>
+                <controllingFieldValues>Completed</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rejected</fullName>
+                <controllingFieldValues>Completed</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Internal Error</fullName>
+                <controllingFieldValues>Completed</controllingFieldValues>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>AssignedUserLink__c</fullName>
+        <formula>IF(NOT(ISBLANK(SprintUser__c)), HYPERLINK(&apos;/&apos; &amp; SprintUser__r.User__c, SprintUser__r.User__r.FirstName &amp; &apos; &apos; &amp; SprintUser__r.User__r.LastName, &apos;_self&apos;), NULL)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Assigned User</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>BlockedTasks__c</fullName>
+        <label>Blocked Tasks</label>
+        <summaryFilterItems>
+            <field>Task__c.IsBlocked__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Task__c.Story__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>CompletedRatio__c</fullName>
+        <formula>IF(AND(EstimatedHours__c != 0, ActualHours__c != 0), ActualHours__c / EstimatedHours__c, IF(TotalTasks__c != 0, CompletedTasks__c / TotalTasks__c, 0))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Completed %</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>CompletedTasks__c</fullName>
+        <label>Completed Tasks</label>
+        <summaryFilterItems>
+            <field>Task__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Completed</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Task__c.Story__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <label>Description</label>
+        <length>32000</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>EstimatedHours__c</fullName>
+        <label>Estimated Hours</label>
+        <summarizedField>Task__c.EstimatedHours__c</summarizedField>
+        <summaryForeignKey>Task__c.Story__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>HoursSummary__c</fullName>
+        <formula>IF (ActualHours__c &gt; 0, TEXT (ActualHours__c), &apos;-&apos;) &amp; &apos; / &apos; &amp; 
+IF (EstimatedHours__c &gt; 0, TEXT (EstimatedHours__c), &apos;-&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Hours</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>InProgressTasks__c</fullName>
+        <label>In Progress Tasks</label>
+        <summaryFilterItems>
+            <field>Task__c.Status__c</field>
+            <operation>equals</operation>
+            <value>In Progress</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Task__c.Story__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>IsBlocked__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Blocked?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsInlineEdit__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>This field is only used during an inline-edit process, and will always be reset to false when saving to the database.</description>
+        <label>Is Inline Edit?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsLate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Late?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>NotYetStartedTasks__c</fullName>
+        <formula>TotalTasks__c - InProgressTasks__c - CompletedTasks__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Not Yet Started Tasks</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>PointsValue__c</fullName>
+        <formula>IF (OR (TEXT(Points__c) = &apos;-&apos;, TEXT(Points__c) = &apos;∞&apos;), 0, VALUE (TEXT(Points__c)))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Points Value</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Points__c</fullName>
+        <label>Points</label>
+        <picklist>
+            <picklistValues>
+                <fullName>0</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>1</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>2</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>3</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>5</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>8</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>13</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>20</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>40</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>100</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>∞</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Position__c</fullName>
+        <label>#</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>SprintUser__c</fullName>
+        <label>Assigned User</label>
+        <referenceTo>SprintUser__c</referenceTo>
+        <relationshipLabel>Stories</relationshipLabel>
+        <relationshipName>Stories</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Sprint__c</fullName>
+        <label>Sprint</label>
+        <referenceTo>Sprint__c</referenceTo>
+        <relationshipLabel>Stories</relationshipLabel>
+        <relationshipName>Stories</relationshipName>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>TaskStatusLink__c</fullName>
+        <description>Note: This link will only function properly in the Managed package version. If you have installed the Open Source version, please remove the &apos;pickleapm__&apos; prefix in the link below.</description>
+        <formula>HYPERLINK(&apos;/apex/pickleapm__story_redirecttomanagetasks?id=&apos; &amp; Id, TEXT(TaskStatus__c), &apos;_self&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Task Status</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>TaskStatus__c</fullName>
+        <label>Task Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Yet Tasked</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Yet Started</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Completed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Blocked</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>TasksSummary__c</fullName>
+        <formula>IF (CompletedTasks__c + InProgressTasks__c !=  TotalTasks__c, TEXT (CompletedTasks__c + InProgressTasks__c), &apos;-&apos;) &amp; &apos; / &apos; &amp; 
+IF (InProgressTasks__c &gt; 0, TEXT (InProgressTasks__c), &apos;-&apos;)  &amp; &apos; / &apos; &amp; 
+IF (CompletedTasks__c &gt; 0, TEXT (CompletedTasks__c), &apos;-&apos;)  &amp; &apos; / &apos; &amp; 
+IF (TotalTasks__c &gt; 0, TEXT (TotalTasks__c), &apos;-&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Tasks</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>TotalTasks__c</fullName>
+        <label>Total Tasks</label>
+        <summaryForeignKey>Task__c.Story__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>UserRole__c</fullName>
+        <label>Stakeholder Role (Obsolete)</label>
+        <referenceTo>UserRole__c</referenceTo>
+        <relationshipLabel>Stories (Obsolete)</relationshipLabel>
+        <relationshipName>Stories</relationshipName>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>WorkstreamRole__c</fullName>
+        <label>Stakeholder Role</label>
+        <referenceTo>WorkstreamRole__c</referenceTo>
+        <relationshipLabel>Stories</relationshipLabel>
+        <relationshipName>Stories</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Workstream__c</fullName>
+        <label>Workstream</label>
+        <referenceTo>Workstream__c</referenceTo>
+        <relationshipLabel>Stories</relationshipLabel>
+        <relationshipName>Stories</relationshipName>
+        <trackHistory>true</trackHistory>
+        <type>Lookup</type>
+    </fields>
+    <label>Story</label>
+    <listViews>
+        <fullName>OpenStories</fullName>
+        <columns>NAME</columns>
+        <columns>Points__c</columns>
+        <columns>HoursSummary__c</columns>
+        <columns>ApprovalStatus__c</columns>
+        <columns>Sprint__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>Open Stories</label>
+    </listViews>
+    <nameField>
+        <label>Story Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Stories</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Points__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>HoursSummary__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Sprint__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Points__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>HoursSummary__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Sprint__c</lookupDialogsAdditionalFields>
+        <searchFilterFields>WorkstreamRole__c</searchFilterFields>
+        <searchFilterFields>Sprint__c</searchFilterFields>
+        <searchFilterFields>Workstream__c</searchFilterFields>
+        <searchResultsAdditionalFields>Points__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>HoursSummary__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Sprint__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Story_IsInProgressWithoutTasks</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(TotalTasks__c == 0, OR(ISPICKVAL(TaskStatus__c, &apos;In Progress&apos;), ISPICKVAL(TaskStatus__c, &apos;Blocked&apos;)))</errorConditionFormula>
+        <errorMessage>Task Status cannot be In Progress or Blocked if Total Tasks is equal to zero.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Story_IsUpdateWhenApprovalCompleted</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISCHANGED(ApprovalStatus__c)), ISPICKVAL (ApprovalStatus__c, &apos;Completed&apos;))</errorConditionFormula>
+        <errorMessage>Cannot update a Story once the Approval Status is Completed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Story_IsUpdateWhenApprovalInProgress</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISCHANGED(ApprovalStatus__c)), ISPICKVAL (ApprovalStatus__c, &apos;In Progress&apos;))</errorConditionFormula>
+        <errorMessage>Cannot update a Story once the Approval Status is In Progress.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Story_IsUpdateWhenSprintIsCompleted</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Sprint__r.Status__c, &apos;Completed&apos;)</errorConditionFormula>
+        <errorMessage>Cannot update a Story once the related Sprint is Completed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Story_IsWorkstreamRoleValid</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISBLANK(WorkstreamRole__r.Workstream__c)), WorkstreamRole__r.Workstream__c != Workstream__c)</errorConditionFormula>
+        <errorDisplayField>WorkstreamRole__c</errorDisplayField>
+        <errorMessage>Stakeholder Role is neither a global role nor associated with this Story&apos;s related Workstream.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Story_WorkstreamIsActive</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISNULL(Workstream__c)), NOT(Workstream__r.IsActive__c))</errorConditionFormula>
+        <errorMessage>Cannot add, remove, or update a Story when the related Workstream exists but is inactive.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Story_WorkstreamIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>OR(ISNULL(Workstream__c), Workstream__c == null)</errorConditionFormula>
+        <errorDisplayField>Workstream__c</errorDisplayField>
+        <errorMessage>Workstream cannot be missing.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Story_ContinueStories</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Continue Stories (Disabled)</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>alert(&apos;This page has been disabled, and is not available for use in this release.&apos;);</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Story_LinkToStory</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Link To Story (Disabled)</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>alert(&apos;This page has been disabled, and is not available for use in this release.&apos;);</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Story_ManageCases</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Manage Cases (Disabled)</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>alert(&apos;This page has been disabled, and is not available for use in this release.&apos;);</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Story_ManageStories</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Manage Stories (Disabled)</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>alert(&apos;This page has been disabled, and is not available for use in this release.&apos;);</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Story_ManageTasksButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Manage Tasks</masterLabel>
+        <openType>sidebar</openType>
+        <page>Story_RedirectToManageTasks</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Story_ManageTasksLink</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Tasks</masterLabel>
+        <openType>replace</openType>
+        <page>Story_RedirectToManageTasks</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>

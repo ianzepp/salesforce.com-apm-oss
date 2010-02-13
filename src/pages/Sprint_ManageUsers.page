@@ -1,0 +1,104 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Sprint__c" extensions="Sprint_ManageUsers">
+    <style type="text/css">
+    .list .dataRow .dataCell { vertical-align: middle; }
+    .list .dataRow .actionColumn a.actionLink { vertical-align: middle; }
+    </style>
+
+    <apex:variable value="{!Sprint__c}" var="sprint" />
+    <apex:variable value="{!Sprint__c.Workstream__c}" var="sprintWorkstream" />
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+    <apex:sectionHeader title="{!$ObjectType.Sprint__c.Label}" subtitle="{!$Label.Sprint_ManageUsers}" />
+
+    <apex:outputPanel style="display: block; margin-bottom: 1em; margin-top: 0em;">
+        <apex:outputText value="« " />
+        <apex:outputLink value="/{!sprint.Id}">Back to {!$ObjectType.Sprint__c.Label}: {!sprint.Name}</apex:outputLink>
+    </apex:outputPanel>
+
+    <apex:form id="pbForm">
+        <apex:pageBlock id="pbSprintUsers" title="{!$ObjectType.SprintUser__c.LabelPlural}" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="{!$Label.Common_Save}" action="{!saveSprintUserList}" status="statusUpdating" rerender="pbForm" />
+                <apex:commandButton value="{!$Label.Common_SaveAndReturn}" action="{!saveSprintUserListAndReturn}" status="statusUpdating" rerender="pbForm" />
+                <apex:commandButton value="{!$Label.Common_Cancel}" action="{!cancel}" immediate="true" />
+
+                <apex:actionStatus id="statusUpdating">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" style="vertical-align: middle;" />
+                    </apex:facet> 
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+
+            <apex:pageMessages /> 
+
+            <apex:pageBlockTable value="{!sprintUserList}" var="sprintUser" rendered="{!sprintUserListSize != 0}" >
+                <apex:column headerClass="actionColumn" styleClass="actionColumn">
+                    <apex:facet name="header">{!$Label.Common_Action}</apex:facet>
+
+                    <apex:outputPanel rendered="{!sprintUser.IsUnmanaged__c}">
+                        <apex:commandLink styleClass="actionLink" action="{!deleteSprintUser}" onclick="return confirm('{!$Label.Common_AreYouSure}');">
+                            <apex:outputText value="{!$Label.Common_Remove}" />
+                            <apex:param name="selectedId" value="{!sprintUser.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column value="{!sprintUser.User__c}" />
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.SprintUser__c.Fields.WorkstreamRole__c.Label}</apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:selectList value="{!sprintUser.WorkstreamRole__c}" size="1">
+                            <apex:selectOptions value="{!workstreamRoleOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.SprintUser__c.Fields.Availability__c.Label}</apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:inputField value="{!sprintUser.Availability__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column value="{!sprintUser.User__r.Email}" />
+                <apex:column value="{!sprintUser.EstimatedHours__c}" />
+                <apex:column value="{!sprintUser.ActualHours__c}" />
+                <apex:column value="{!sprintUser.IsUnmanaged__c}" />  
+            </apex:pageBlockTable> 
+
+            <apex:outputPanel rendered="{!sprintUserListSize == 0}">
+                <apex:outputText value="{!$Label.Common_NoRecordsToDisplay}" />
+            </apex:outputPanel>
+        </apex:pageBlock>
+
+        <apex:outputPanel styleClass="bEditBlock" style="display: block; padding-left: 2.0em;">
+            <apex:outputText value="Add an Unmanaged User to this Sprint" style="display: block;" />
+            <apex:inputField value="{!newSprintUser.User__c}" required="false" />
+            <apex:commandButton action="{!insertSprintUser}" value="Add" style="display: inline;"/>
+        </apex:outputPanel>
+    </apex:form>
+
+</apex:page>

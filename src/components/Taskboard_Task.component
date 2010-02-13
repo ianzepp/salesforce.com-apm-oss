@@ -1,0 +1,113 @@
+<apex:component >
+    <apex:attribute name="task" type="Task__c" required="true" description="The Task object associated with this component." />
+    <apex:attribute name="rerender" type="String" required="true" description="The ID of one or more components that are redrawn when the result of an AJAX update request returns to the client. This value can be a single ID, a comma-separated list of IDs, or a merge field expression for a list or collection of IDs." />
+    <apex:attribute name="status" type="String" required="true" description="The ID of an associated component that displays the status of an AJAX update request. See the actionStatus component." />
+
+    <!-- static image variables -->
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-default-avatar.gif')}" var="avatarUrl" />
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-minus.gif')}" var="decrementButtonUrl" />
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-plus.gif')}" var="incrementButtonUrl" />
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-handle.png')}" var="handleUrl" />
+
+    <!-- assisting vars -->
+    <apex:variable value="{!task.Sprint__r.Status__c == 'Completed'}" var="isSprintCompleted" />
+    <apex:variable value="{!task.Sprint__r.Status__c == 'In Progress'}" var="isSprintInProgress" />
+    <apex:variable value="{!task.Sprint__r.IsGeneralBacklog__c}" var="isSprintGeneralBacklog" />
+    <apex:variable value="true" var="isEstimatedHoursReadWrite" />
+    <apex:variable value="true" var="isActualHoursReadWrite" />
+    <apex:variable value="true" var="isStatusReadWrite" />
+    <apex:variable value="true" var="isBlockedReadWrite" />
+    <apex:variable value="true" var="isCompletedReadWrite" />
+
+    <apex:panelGrid columns="1" id="task" styleClass="task {!IF(task.IsBlocked__c,'taskBlocked','')} {!task.Id}" style="display: block;">
+        <apex:panelGroup styleClass="name">
+            <apex:outputLink value="/{!task.Id}" styleClass="actionLink">
+                <apex:outputText value="{!task.Name}" />
+            </apex:outputLink>
+        </apex:panelGroup>
+
+        <apex:panelGroup styleClass="body">
+            <apex:panelGrid columns="2" columnClasses="label, input" styleClass="body" width="100%">
+                <!-- Estimated Hours -->
+
+                <apex:panelGroup styleClass="summarized hoursSummary">
+                    <apex:outputLabel value="{!$ObjectType.Task__c.Fields.HoursSummary__c.Label}" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="summarized hoursSummary">
+                    <apex:outputField value="{!task.HoursSummary__c}" styleClass="hours" />
+                </apex:panelGroup>
+
+                <!-- Estimated Hours -->
+
+                <apex:panelGroup styleClass="expanded estimatedHours">
+                    <apex:outputLabel value="{!$ObjectType.Task__c.Fields.EstimatedHours__c.Label}" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded estimatedHours" rendered="{!isEstimatedHoursReadWrite == 'true'}">
+                    <apex:inputField value="{!task.EstimatedHours__c}" styleClass="hours" style="width: 4em;" />
+                    <apex:image value="{!incrementButtonUrl}" styleClass="mouseoverButton incrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetaskboard_incrementHours(this);" />
+                    <apex:image value="{!decrementButtonUrl}" styleClass="mouseoverButton decrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetaskboard_decrementHours(this);" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded estimatedHours" rendered="{!isEstimatedHoursReadWrite == 'false'}">
+                    <apex:outputField value="{!task.EstimatedHours__c}" styleClass="hours" />
+                </apex:panelGroup>
+
+                <!-- Actual Hours -->
+
+                <apex:panelGroup styleClass="expanded actualHours">
+                    <apex:outputLabel value="{!$ObjectType.Task__c.Fields.ActualHours__c.Label}" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded actualHours" rendered="{!isActualHoursReadWrite == 'true'}">
+                    <apex:inputField value="{!task.ActualHours__c}" styleClass="hours" style="width: 4em;" />
+                    <apex:image value="{!incrementButtonUrl}" styleClass="mouseoverButton incrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetaskboard_incrementHours(this);" />
+                    <apex:image value="{!decrementButtonUrl}" styleClass="mouseoverButton decrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetaskboard_decrementHours(this);" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded actualHours" rendered="{!isActualHoursReadWrite != 'true'}">
+                    <apex:outputField value="{!task.ActualHours__c}" styleClass="hours" />
+                </apex:panelGroup>
+
+                <!-- Status -->
+
+                <apex:panelGroup styleClass="expanded status">
+                    <apex:outputLabel value="{!$ObjectType.Task__c.Fields.Status__c.Label}" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded status" rendered="{!isStatusReadWrite == 'true'}">
+                    <apex:inputField value="{!task.Status__c}">
+                        <apex:actionSupport event="onchange" rerender="{!rerender}" status="{!status}" />
+                    </apex:inputField>
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded status" rendered="{!isStatusReadWrite != 'true'}">
+                    <apex:outputField value="{!task.Status__c}" />
+                </apex:panelGroup>
+
+                <!-- is Blocked? -->
+
+                <apex:panelGroup styleClass="expanded isBlocked">
+                    <apex:outputLabel value="{!$ObjectType.Task__c.Fields.IsBlocked__c.Label}" />
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded isBlocked" rendered="{!isBlockedReadWrite == 'true'}">
+                    <apex:inputField value="{!task.IsBlocked__c}">
+                        <apex:actionSupport event="onchange" rerender="task" status="{!status}" />
+                    </apex:inputField>
+                </apex:panelGroup>
+
+                <apex:panelGroup styleClass="expanded isBlocked" rendered="{!isBlockedReadWrite != 'true'}">
+                    <apex:outputField value="{!task.IsBlocked__c}" />
+                </apex:panelGroup>
+            </apex:panelGrid>
+        </apex:panelGroup>
+
+        <apex:panelGroup styleClass="timestamp">
+            <apex:outputLabel value="{!$ObjectType.Task__c.Fields.LastModifiedDate.Label}" />
+            <apex:outputLabel value=": " />
+            <apex:outputField value="{!task.LastModifiedDate}" />
+        </apex:panelGroup>
+    </apex:panelGrid>
+</apex:component>

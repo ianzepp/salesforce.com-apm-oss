@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>ActualHours__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Δ Actual Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>EstimatedHours__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Δ Estimated Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>SprintUser__c</fullName>
+        <label>Sprint User</label>
+        <referenceTo>SprintUser__c</referenceTo>
+        <relationshipName>Time</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Sprint__c</fullName>
+        <label>Sprint</label>
+        <referenceTo>Sprint__c</referenceTo>
+        <relationshipName>Time</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <type>MasterDetail</type>
+    </fields>
+    <fields>
+        <fullName>Story__c</fullName>
+        <label>Story</label>
+        <referenceTo>Story__c</referenceTo>
+        <relationshipName>Time</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <type>MasterDetail</type>
+    </fields>
+    <fields>
+        <fullName>Task__c</fullName>
+        <label>Task</label>
+        <referenceTo>Task__c</referenceTo>
+        <relationshipName>Time</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Time</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>WorkstreamUser__c</fullName>
+        <label>Workstream User</label>
+        <referenceTo>WorkstreamUser__c</referenceTo>
+        <relationshipName>Time</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>Time Entry</label>
+    <nameField>
+        <displayFormat>{0000000}</displayFormat>
+        <label>Record ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Time Entries</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Time_IsUpdateWhenSprintIsCompleted</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Sprint__r.Status__c, &apos;Completed&apos;)</errorConditionFormula>
+        <errorMessage>Cannot update a Time Entry once the related Sprint&apos;s &apos;Status&apos; is &apos;Completed&apos;.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Time_WorkstreamIsActive</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISNULL(WorkstreamUser__r.Workstream__c)), NOT(WorkstreamUser__r.Workstream__r.IsActive__c))</errorConditionFormula>
+        <errorMessage>Cannot update a Time Entry when the related Workstream exists but is inactive.</errorMessage>
+    </validationRules>
+</CustomObject>

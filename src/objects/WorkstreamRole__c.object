@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>IsActive__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Is Active?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsGlobal__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Is Global?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsInlineEdit__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Inline Edit?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Workstream__c</fullName>
+        <label>Workstream</label>
+        <referenceTo>Workstream__c</referenceTo>
+        <relationshipLabel>Workstream Roles</relationshipLabel>
+        <relationshipName>Workstream_Roles</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>Workstream Role</label>
+    <nameField>
+        <label>Workstream Role Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Workstream Roles</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

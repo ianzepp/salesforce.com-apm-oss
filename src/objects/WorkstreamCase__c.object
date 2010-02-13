@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>CaseNumber__c</fullName>
+        <formula>Case__r.CaseNumber</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Case Number</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Case__c</fullName>
+        <label>Case</label>
+        <referenceTo>Case</referenceTo>
+        <relationshipLabel>Workstream Cases</relationshipLabel>
+        <relationshipName>WorkstreamCases</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <type>MasterDetail</type>
+    </fields>
+    <fields>
+        <fullName>Priority__c</fullName>
+        <formula>TEXT(Case__r.Priority)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Priority</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>ResolutionStatus__c</fullName>
+        <label>Resolution Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Yet Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Completed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Canceled</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Sprint__c</fullName>
+        <label>Assigned Sprint</label>
+        <referenceTo>Sprint__c</referenceTo>
+        <relationshipLabel>Workstream Cases</relationshipLabel>
+        <relationshipName>WorkstreamCases</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <formula>TEXT(Case__r.Status)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Status</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Story__c</fullName>
+        <label>Assigned Story</label>
+        <referenceTo>Story__c</referenceTo>
+        <relationshipLabel>Workstream Cases</relationshipLabel>
+        <relationshipName>WorkstreamCases</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Subject__c</fullName>
+        <formula>Case__r.Subject</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Subject</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Workstream__c</fullName>
+        <label>Workstream</label>
+        <referenceTo>Workstream__c</referenceTo>
+        <relationshipLabel>Workstream Cases</relationshipLabel>
+        <relationshipName>WorkstreamCases</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <type>MasterDetail</type>
+    </fields>
+    <label>Workstream Case</label>
+    <nameField>
+        <displayFormat>{0000000}</displayFormat>
+        <label>Record ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Workstream Cases</pluralLabel>
+    <searchLayouts>
+        <lookupDialogsAdditionalFields>Case__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Subject__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Priority__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>ResolutionStatus__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Workstream__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Sprint__c</lookupDialogsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>WorkstreamCase_CaseIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK(Case__c)</errorConditionFormula>
+        <errorDisplayField>Case__c</errorDisplayField>
+        <errorMessage>Case is missing.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>WorkstreamCase_WorkstreamIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISBLANK(Workstream__c)</errorConditionFormula>
+        <errorDisplayField>Workstream__c</errorDisplayField>
+        <errorMessage>Workstream is missing.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>WorkstreamCase_AssignToWorkstream</fullName>
+        <availability>online</availability>
+        <description>@deprecated</description>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Assign To Workstream</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>#</url>
+    </webLinks>
+    <webLinks>
+        <fullName>WorkstreamCase_ManageCasesFromSprint</fullName>
+        <availability>online</availability>
+        <description>@deprecated</description>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Manage Cases</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>#</url>
+    </webLinks>
+    <webLinks>
+        <fullName>WorkstreamCase_ManageCasesFromWorkstream</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Manage Cases</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>#</url>
+    </webLinks>
+</CustomObject>

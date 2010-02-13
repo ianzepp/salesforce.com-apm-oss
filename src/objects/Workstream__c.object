@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableActivities>true</enableActivities>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Cadence__c</fullName>
+        <inlineHelpText>The Cadence is how long each of your Sprints generally last. Normal timeframes are from 2 to 4 weeks.</inlineHelpText>
+        <label>Cadence</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Every Week</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Every Two Weeks</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Every Three Weeks</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Every Month</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Every Six Weeks</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>DailyCapability__c</fullName>
+        <defaultValue>5.0</defaultValue>
+        <inlineHelpText>The equivalent number of hours-per-day a &apos;Full Time&apos; user could be considered available for assigned tasks. A typical value would be 4 to 6 hours, with the default equal to 5 hours.</inlineHelpText>
+        <label>Daily Capability</label>
+        <precision>5</precision>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <label>Description</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>IsActive__c</fullName>
+        <defaultValue>true</defaultValue>
+        <inlineHelpText>A Workstream must be active in order to make any changes to associated Sprints, Stories, or Tasks. This field can be unchecked to quickly lock down a Workstream and prevent any further updates.</inlineHelpText>
+        <label>Is Active?</label>
+        <trackHistory>true</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsAutomaticSprints__c</fullName>
+        <defaultValue>true</defaultValue>
+        <inlineHelpText>Unimplemented.</inlineHelpText>
+        <label>Automatic Sprints?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>NextStartingOn__c</fullName>
+        <inlineHelpText>Unimplemented. This date represents the starting date of the next Sprint, and is used only when Automatic Sprints are enabled.</inlineHelpText>
+        <label>Next Starting On</label>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>OpenCases__c</fullName>
+        <label>Open Cases</label>
+        <summaryFilterItems>
+            <field>WorkstreamCase__c.ResolutionStatus__c</field>
+            <operation>equals</operation>
+            <value>Not Yet Started, In Progress</value>
+        </summaryFilterItems>
+        <summaryForeignKey>WorkstreamCase__c.Workstream__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>StatusSummary__c</fullName>
+        <formula>IF(IsActive__c == false, &apos;• &apos; &amp; $Label.Workstream_IsNotActive, &apos;&apos;) &amp; 
+IF(IsActive__c == false,  BR(), &apos;&apos;) &amp;
+
+IF(TotalUsers__c == 0, &apos;• &apos; &amp; $Label.Workstream_NoUsersAssigned, &apos;&apos;) &amp; 
+IF(TotalUsers__c == 0,  BR(), &apos;&apos;) &amp;
+
+IF(TotalCases__c == 0, &apos;• &apos; &amp; $Label.Workstream_NoCasesAssigned, &apos;&apos;) &amp; 
+IF(TotalCases__c == 0,  BR(), &apos;&apos;) &amp;
+
+IF(AND(TotalCases__c != 0, OpenCases__c != 0), &apos;• &apos; &amp; $Label.Workstream_UnresolvedCases, &apos;&apos;) &amp;
+IF(AND(TotalCases__c != 0, OpenCases__c != 0),  BR(), &apos;&apos;) &amp;
+
+IF(AND(IsActive__c, TotalUsers__c != 0, TotalCases__c != 0, OpenCases__c == 0), &apos;• &apos; &amp; $Label.Common_AllIsGood, &apos;&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Status Summary</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>TotalCases__c</fullName>
+        <label>Total Cases</label>
+        <summaryForeignKey>WorkstreamCase__c.Workstream__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>TotalUsers__c</fullName>
+        <label>Total Users</label>
+        <summaryFilterItems>
+            <field>WorkstreamUser__c.AvailabilityRatio__c</field>
+            <operation>greaterThan</operation>
+            <value>0</value>
+        </summaryFilterItems>
+        <summaryForeignKey>WorkstreamUser__c.Workstream__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <label>Workstream</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Cadence__c</columns>
+        <columns>NextStartingOn__c</columns>
+        <columns>IsActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Workstream Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Workstreams</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Cadence__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>NextStartingOn__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>IsActive__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Cadence__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>IsActive__c</lookupDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Cadence__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>NextStartingOn__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>IsActive__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <webLinks>
+        <fullName>Workstream_ManageCasesButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Manage Cases</masterLabel>
+        <openType>sidebar</openType>
+        <page>Workstream_ManageCases</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Workstream_ManageRolesButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Manage Roles</masterLabel>
+        <openType>sidebar</openType>
+        <page>Workstream_ManageRoles</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Workstream_ManageUsersButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Manage Users</masterLabel>
+        <openType>sidebar</openType>
+        <page>Workstream_ManageUsers</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>

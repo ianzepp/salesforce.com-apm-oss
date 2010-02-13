@@ -1,0 +1,28 @@
+<apex:component >
+    <apex:attribute name="story" type="Story__c" description="" required="true" />
+    <apex:attribute name="borderColor" type="String" description="" default="#cccccc" />
+
+    <!-- Bundled resources -->
+    <apex:stylesheet value="{!URLFOR($Resource.BundledResources, 'bundled-resources/stylesheets/Taskboard_Story.css')}" />
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-default-avatar.gif')}" var="defaultAvatarImage" />
+
+    <table class="storyInfo" width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="name" colspan="3"><a href="/{!story.Id}">{!story.Name}</a></td>
+        </tr>
+        
+        <tr>
+            <td class="ownerImage" width="50px"><apex:image value="{!defaultAvatarImage}" /></td>
+            <td class="info">
+                <div class="status" style="font-weight: bold;">Tasks:</div>
+                <div class="hours" style="font-weight: bold;">Hours:</div>
+                <div class="points" style="font-weight: bold;">Points:</div>
+            </td>
+            <td class="info" width="50%">
+                <div class="status">{!story.TaskStatus__c}</div>
+                <div class="hours">{!story.HoursSummary__c}</div>
+                <div class="points">{!story.Points__c}</div>
+            </td>
+         </tr>
+    </table>
+</apex:component>

@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableActivities>true</enableActivities>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>ActualHours__c</fullName>
+        <label>Actual Hours</label>
+        <summarizedField>Task__c.ActualHours__c</summarizedField>
+        <summaryForeignKey>Task__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>BlockedTasks__c</fullName>
+        <label>Blocked Tasks</label>
+        <summaryFilterItems>
+            <field>Task__c.IsBlocked__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Task__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>CalendarDays__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Calendar Days</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>CompletedTasks__c</fullName>
+        <label>Completed Tasks</label>
+        <summaryFilterItems>
+            <field>Task__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Completed</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Task__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>CompletesOn__c</fullName>
+        <label>Completes On</label>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>EstimatedHours__c</fullName>
+        <label>Estimated Hours</label>
+        <summarizedField>Task__c.EstimatedHours__c</summarizedField>
+        <summaryForeignKey>Task__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>sum</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>HoursSummary__c</fullName>
+        <formula>IF (ActualHours__c &gt; 0, TEXT (ActualHours__c), &apos;-&apos;) &amp; &apos; / &apos; &amp;
+IF (EstimatedHours__c &gt; 0, TEXT (EstimatedHours__c), &apos;-&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Hours</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>IdealRemainingHours__c</fullName>
+        <formula>IF(CompletesOn__c &lt;= TODAY(), 0,
+IF(CompletesOn__c == StartsOn__c, 0,
+IF(StartsOn__c &gt;= TODAY(), EstimatedHours__c,
+((CompletesOn__c - TODAY ()) / (CompletesOn__c -  StartsOn__c)) *  EstimatedHours__c)))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Ideal Remaining Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>InProgressTasks__c</fullName>
+        <label>In Progress Tasks</label>
+        <summaryFilterItems>
+            <field>Task__c.Status__c</field>
+            <operation>equals</operation>
+            <value>In Progress</value>
+        </summaryFilterItems>
+        <summaryForeignKey>Task__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>IsAutomatic__c</fullName>
+        <formula>IF(Workstream__r.IsAutomaticSprints__c, &apos;Automatic&apos;, NULL)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Is Automatic?</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>IsGeneralBacklog__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is General Backlog?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>NotYetStartedTasks__c</fullName>
+        <formula>TotalTasks__c - InProgressTasks__c - CompletedTasks__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Not Yet Started Tasks</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>RemainingHours__c</fullName>
+        <formula>MAX (0, EstimatedHours__c - ActualHours__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Remaining Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>StartsOn__c</fullName>
+        <label>Starts On</label>
+        <trackHistory>true</trackHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Yet Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Completed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>StoryPoints__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Points</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>TaskStatusLink__c</fullName>
+        <formula>HYPERLINK(&apos;/apex/pickleapm__sprint_managetasks?id=&apos; &amp; Id, TEXT(TaskStatus__c), &apos;_self&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Task Status</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>TaskStatus__c</fullName>
+        <label>Task Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Yet Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Completed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Blocked</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>TaskableHours__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Taskable Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>TotalMembers__c</fullName>
+        <label>Total Members</label>
+        <summaryFilterItems>
+            <field>SprintUser__c.AvailabilityRatio__c</field>
+            <operation>greaterThan</operation>
+            <value>0</value>
+        </summaryFilterItems>
+        <summaryForeignKey>SprintUser__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>TotalTasks__c</fullName>
+        <label>Total Tasks</label>
+        <summaryForeignKey>Task__c.Sprint__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Utilization__c</fullName>
+        <formula>IF(TaskableHours__c &gt; 0,  MAX(EstimatedHours__c,  ActualHours__c) / TaskableHours__c, 0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Utilization</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Workstream__c</fullName>
+        <label>Workstream</label>
+        <referenceTo>Workstream__c</referenceTo>
+        <relationshipName>Sprints</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>Sprint</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>StoryPoints__c</columns>
+        <columns>StartsOn__c</columns>
+        <columns>CompletesOn__c</columns>
+        <columns>Status__c</columns>
+        <columns>TaskStatus__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Sprint Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Sprints</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>StartsOn__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>CompletesOn__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Status__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>TaskStatus__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>StartsOn__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>CompletesOn__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>TaskStatus__c</lookupDialogsAdditionalFields>
+        <searchFilterFields>StartsOn__c</searchFilterFields>
+        <searchFilterFields>CompletesOn__c</searchFilterFields>
+        <searchFilterFields>Status__c</searchFilterFields>
+        <searchFilterFields>TaskStatusLink__c</searchFilterFields>
+        <searchResultsAdditionalFields>StartsOn__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>CompletesOn__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>TaskStatus__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Sprint_ActualHoursIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>ActualHours__c &lt; 0</errorConditionFormula>
+        <errorMessage>Actual Hours cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_CalendarDaysIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>CalendarDays__c &lt; 0</errorConditionFormula>
+        <errorDisplayField>CalendarDays__c</errorDisplayField>
+        <errorMessage>Calendar Days cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_CompletedTasksIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>CompletedTasks__c &lt; 0</errorConditionFormula>
+        <errorMessage>Completed Tasks cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_CompletedTasksLessThanTotalTasks</fullName>
+        <active>true</active>
+        <errorConditionFormula>CompletedTasks__c &gt; TotalTasks__c</errorConditionFormula>
+        <errorMessage>Completed Tasks cannot be larger than Total Tasks.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_CompletesOnIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISNULL(CompletesOn__c)</errorConditionFormula>
+        <errorDisplayField>CompletesOn__c</errorDisplayField>
+        <errorMessage>Completes On cannot be missing.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_EstimatedHoursIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>EstimatedHours__c &lt; 0</errorConditionFormula>
+        <errorMessage>Estimated Hours cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_GeneralBacklogHasNoActualHours</fullName>
+        <active>true</active>
+        <errorConditionFormula>IsGeneralBacklog__c &amp;&amp; ActualHours__c &gt; 0</errorConditionFormula>
+        <errorMessage>Actual Hours cannot be assigned to General Backlog Sprints.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_GeneralBacklogHasNoUsers</fullName>
+        <active>true</active>
+        <errorConditionFormula>IsGeneralBacklog__c &amp;&amp; TotalMembers__c &gt; 0</errorConditionFormula>
+        <errorMessage>Users cannot be assigned to General Backlog Sprints.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_InProgressTasksIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>InProgressTasks__c &lt; 0</errorConditionFormula>
+        <errorMessage>In Progress Tasks cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_InProgressTasksLessThanTotalTasks</fullName>
+        <active>true</active>
+        <errorConditionFormula>InProgressTasks__c &gt; TotalTasks__c</errorConditionFormula>
+        <errorMessage>In Progress Tasks cannot be larger than Total Tasks.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_StartsOnIsBeforeCompletesOn</fullName>
+        <active>true</active>
+        <errorConditionFormula>CompletesOn__c &lt;  StartsOn__c</errorConditionFormula>
+        <errorDisplayField>StartsOn__c</errorDisplayField>
+        <errorMessage>Starts On cannot be a date prior to Completes On.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_StartsOnIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISNULL(StartsOn__c)</errorConditionFormula>
+        <errorDisplayField>StartsOn__c</errorDisplayField>
+        <errorMessage>Starts On cannot be missing.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_StatusIsInProgressWithinDates</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(Status__c, &apos;In Progress&apos;), OR(StartsOn__c &gt; TODAY(), CompletesOn__c &lt; TODAY()))</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Status cannot be In Progress before the Starts On or after the Completes On dates.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_StatusUpdatedIncorrectly1</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISCHANGED(Status__c), PRIORVALUE(Status__c) == &apos;In Progress&apos;, ISPICKVAL(Status__c, &apos;Not Yet Started&apos;))</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Status cannot be updated from In Progress to Not Yet Started.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_StatusUpdatedIncorrectly2</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISCHANGED(Status__c), PRIORVALUE(Status__c) == &apos;Completed&apos;)</errorConditionFormula>
+        <errorDisplayField>Status__c</errorDisplayField>
+        <errorMessage>Status cannot be updated from Completed to any other value.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_StoryPointsIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>StoryPoints__c &lt; 0</errorConditionFormula>
+        <errorDisplayField>StoryPoints__c</errorDisplayField>
+        <errorMessage>Story Points cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_TaskStatusUpdatedIncorrectly1</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(TaskStatus__c, &apos;In Progress&apos;), ISPICKVAL(Status__c, &apos;Not Yet Started&apos;))</errorConditionFormula>
+        <errorDisplayField>TaskStatus__c</errorDisplayField>
+        <errorMessage>Task Status cannot be In Progress while Status is still Not Yet Started.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_TaskStatusUpdatedIncorrectly2</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(TaskStatus__c, &apos;Blocked&apos;), ISPICKVAL(Status__c, &apos;Not Yet Started&apos;))</errorConditionFormula>
+        <errorDisplayField>TaskStatus__c</errorDisplayField>
+        <errorMessage>Task Status cannot be Blocked while Status is still Not Yet Started.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_TaskStatusUpdatedIncorrectly3</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(TaskStatus__c, &apos;Completed&apos;), ISPICKVAL(Status__c, &apos;Not Yet Started&apos;))</errorConditionFormula>
+        <errorDisplayField>TaskStatus__c</errorDisplayField>
+        <errorMessage>Task Status cannot be Completed while Status is still Not Yet Started.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_TotalTasksIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>TotalTasks__c &lt; 0</errorConditionFormula>
+        <errorMessage>Total Tasks cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_WorkstreamIsActive</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISNULL(Workstream__c)),  NOT(Workstream__r.IsActive__c))</errorConditionFormula>
+        <errorMessage>Cannot update a Sprint when the related Workstream exists but is inactive.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sprint_WorkstreamIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISNULL(Workstream__c)</errorConditionFormula>
+        <errorDisplayField>Workstream__c</errorDisplayField>
+        <errorMessage>Workstream cannot be missing.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Sprint_BurndownButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <hasScrollbars>true</hasScrollbars>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>page</linkType>
+        <masterLabel>Burndown</masterLabel>
+        <openType>newWindow</openType>
+        <page>Analytics_SprintBurndown</page>
+        <position>none</position>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_BurndownLink</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <height>420</height>
+        <linkType>page</linkType>
+        <masterLabel>Burndown</masterLabel>
+        <openType>newWindow</openType>
+        <page>Analytics_SprintBurndown</page>
+        <position>none</position>
+        <protected>false</protected>
+        <width>800</width>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_ManageCasesButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Cases</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageCases</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_ManageCasesLink</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Cases</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageCases</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_ManageStoriesButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Stories</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageStories</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_ManageStoriesLink</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Stories</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageStories</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_ManageTasksButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Tasks</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageTasks</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_ManageTasksLink</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Manage Tasks</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageTasks</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_TaskBoardButton</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Task Board</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageTaskboard</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Sprint_TaskBoardLink</fullName>
+        <availability>online</availability>
+        <displayType>link</displayType>
+        <linkType>page</linkType>
+        <masterLabel>Task Board</masterLabel>
+        <openType>replace</openType>
+        <page>Sprint_ManageTaskboard</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>

@@ -1,0 +1,103 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Workstream__c" extensions="Workstream_ManageUsers">
+    <style type="text/css">
+    .list .dataRow .dataCell { vertical-align: text-bottom; }
+    .list .dataRow .actionColumn a.actionLink { vertical-align: text-bottom; }
+    </style>
+
+    <apex:variable value="{!Workstream__c}" var="workstream" />
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+    <apex:sectionHeader title="{!$ObjectType.Workstream__c.Label}" subtitle="{!$Label.Workstream_ManageUsers}" />
+
+    <apex:outputPanel style="display: block; margin-bottom: 1em; margin-top: 0em;">
+        <apex:outputText value="« " />
+        <apex:outputLink value="/{!workstream.Id}">Back to {!$ObjectType.Workstream__c.Label}: {!workstream.Name}</apex:outputLink>
+    </apex:outputPanel>
+    
+    <apex:form id="pbWorkstreamUsersForm">
+        <apex:pageBlock id="pbWorkstreamUsers" title="{!$ObjectType.WorkstreamUser__c.LabelPlural}" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="{!$Label.Common_Save}" action="{!saveWorkstreamUserList}" status="statusUpdating" rerender="pbWorkstreamUsers" />
+                <apex:commandButton value="{!$Label.Common_SaveAndReturn}" action="{!saveWorkstreamUserListAndReturn}" status="statusUpdating" rerender="pbWorkstreamUsers" />
+                <apex:commandButton value="{!$Label.Common_Cancel}" action="{!cancel}" />
+
+                <apex:actionStatus id="statusUpdating">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" style="vertical-align: middle;" />
+                    </apex:facet> 
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+
+            <apex:pageMessages /> 
+
+            <apex:pageBlockTable value="{!workstreamUserList}" var="workstreamUser" rendered="{!workstreamUserListSize != 0}" >
+                <apex:column headerClass="actionColumn" styleClass="actionColumn">
+                    <apex:facet name="header">{!$Label.Common_Action}</apex:facet>
+                    <apex:commandLink styleClass="actionLink" action="{!deleteWorkstreamUser}" onclick="return confirm('{!$Label.Common_AreYouSure}');">
+                        <apex:outputText value="{!$Label.Common_Remove}" />
+                        <apex:param name="selectedId" value="{!workstreamUser.Id}" />
+                    </apex:commandLink>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.WorkstreamUser__c.Fields.User__c.Label}</apex:facet>
+
+                    <apex:outputPanel rendered="{!NOT(ISNULL(workstreamUser.Id))}" >
+                        <apex:outputField value="{!workstreamUser.User__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.WorkstreamUser__c.Fields.WorkstreamRole__c.Label}</apex:facet>
+                    
+                    <apex:outputPanel >
+                        <apex:selectList value="{!workstreamUser.WorkstreamRole__c}" size="1">
+                            <apex:selectOptions value="{!workstreamRoleOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.WorkstreamUser__c.Fields.Availability__c.Label}</apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:inputField value="{!workstreamUser.Availability__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column value="{!workstreamUser.User__r.Email}" />
+            </apex:pageBlockTable>
+
+            <apex:outputPanel rendered="{!workstreamUserListSize == 0}">
+                <apex:outputText value="{!$Label.Common_NoRecordsToDisplay}" />
+            </apex:outputPanel>
+        </apex:pageBlock>
+
+        <apex:outputPanel styleClass="bEditBlock" style="display: block; padding-left: 2.0em;">
+            <apex:outputText value="Assign an existing User to this Workstream" style="display: block;" />
+            <apex:inputField value="{!newWorkstreamUser.User__c}" required="false" />
+            <apex:commandButton action="{!insertWorkstreamUser}" value="Add" style="display: inline;"/>
+        </apex:outputPanel>
+    </apex:form>
+
+</apex:page>

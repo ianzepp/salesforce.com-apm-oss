@@ -1,0 +1,122 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Workstream__c" extensions="Workstream_ManageCases">
+    <style type="text/css">
+.list .dataRow .dataCell {
+	vertical-align: middle;
+}
+</style>
+
+    <!-- Scripts -->
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+
+    <!-- Section header and breadcrumbs -->
+    <apex:sectionHeader title="{!$ObjectType.Workstream__c.Label}" subtitle="{!$Label.Workstream_ManageCases}" />
+
+    <apex:outputPanel style="display: block; margin-bottom: 1em; margin-top: 0em;">
+        <apex:outputText value="« " />
+        <apex:outputLink value="/{!Workstream__c.Id}">Back to {!$ObjectType.Workstream__c.Label}: {!Workstream__c.Name}</apex:outputLink>
+    </apex:outputPanel>
+
+
+    <!-- Variables to use in the controller -->
+    <apex:variable value="{!Workstream__c.Name}" var="workstreamName" />
+
+    <apex:form id="pbForm">
+        <apex:pageBlock title="{!$Label.Workstream_ManageCases}" mode="edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="{!$Label.Common_Save}" action="{!saveWorkstreamCaseList}" status="statusUpdating" rerender="pbForm" />
+                <apex:commandButton value="{!$Label.Common_SaveAndReturn}" action="{!saveWorkstreamCaseListAndReturn}" status="statusUpdating" rerender="pbForm" />
+                <apex:commandButton value="{!$Label.Common_Cancel}" action="{!cancel}" />
+
+                <apex:actionStatus id="statusUpdating">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" style="vertical-align: middle;" />
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+
+            <apex:pageMessages />
+
+            <apex:pageBlockTable value="{!workstreamCaseList}" var="workstreamCase" rendered="{!workstreamCaseListSize != 0}">
+                <apex:column headerClass="actionColumn" styleClass="actionColumn">
+                    <apex:facet name="header">{!$Label.Common_Action}</apex:facet>
+                    <apex:commandLink styleClass="actionLink" action="{!deleteWorkstreamCase}" onclick="return confirm('{!$Label.Common_AreYouSure}');" rerender="pbForm" status="statusUpdating" >
+                        <apex:outputText value="{!$Label.Common_Remove}" />
+                        <apex:param name="selectedId" value="{!workstreamCase.Id}" />
+                    </apex:commandLink>
+                </apex:column>
+
+                <apex:column value="{!workstreamCase.Case__c}" />
+                <apex:column value="{!workstreamCase.Case__r.Subject}" />
+                <apex:column value="{!workstreamCase.Case__r.Priority}" />
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.Case.Fields.Status.Label}</apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:inputField value="{!workstreamCase.Case__r.Status}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.WorkstreamCase__c.Fields.ResolutionStatus__c.Label}</apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:inputField value="{!workstreamCase.ResolutionStatus__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.WorkstreamCase__c.Fields.Sprint__c.Label}</apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:selectList value="{!workstreamCase.Sprint__c}" size="1">
+                            <apex:selectOptions value="{!sprintOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column styleClass="booleanColumn" headerClass="booleanColumn" footerClass="booleanColumn" width="3%">
+                    <apex:facet name="header">Converted?</apex:facet>
+                    
+                    <apex:outputPanel rendered="{!ISBLANK(workstreamCase.Story__c)}">
+                        <apex:image value="/img/checkbox_unchecked.gif" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!NOT(ISBLANK(workstreamCase.Story__c))}">
+                        <apex:image value="/img/checkbox_checked.gif" />
+                    </apex:outputPanel>
+                </apex:column>
+            </apex:pageBlockTable>
+
+            <apex:outputPanel rendered="{!workstreamCaseListSize == 0}">
+                <apex:outputText value="{!$Label.Common_NoRecordsToDisplay}" />
+            </apex:outputPanel>
+        </apex:pageBlock>
+
+        <apex:outputPanel styleClass="bEditBlock" style="display: block; padding-left: 2.0em;">
+            <apex:outputText value="{!$Label.Workstream_AssignCaseToWorkstream}" style="display: block;" />
+            <apex:inputField value="{!newWorkstreamCase.Case__c}" required="false" />
+            <apex:commandButton action="{!insertWorkstreamCase}" value="Add" style="display: inline;" rerender="pbForm" status="statusUpdating" />
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

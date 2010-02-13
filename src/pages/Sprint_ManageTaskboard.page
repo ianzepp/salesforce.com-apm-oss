@@ -1,0 +1,207 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Sprint__c" extensions="Sprint_ManageTasks" sidebar="false" showHeader="false" tabStyle="Sprint__c" standardStylesheets="true">
+    <!-- Scripts -->
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+
+    <!-- Section header and breadcrumbs -->
+    <apex:sectionHeader title="{!$ObjectType.Sprint__c.Label}" subtitle="{!$Label.Sprint_ManageTaskboard}" />
+
+    <!-- Color palettes -->
+    <apex:variable var="statusColorOk" value="#61FF61" />
+    <apex:variable var="statusColorBlocked" value="#FF6161" />
+    <apex:variable var="statusColorLate" value="#FFF046" />
+    
+    <!-- Main panel grid -->
+    <apex:form id="tbForm">
+        <apex:panelGrid columns="4" styleClass="headerWrapper" columnClasses="header,header,header,header" width="100%">
+            <apex:outputPanel >
+                <apex:actionStatus id="tbStatus">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" />
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:outputPanel>
+
+            <apex:outputLabel value="Not Yet Started" />
+            <apex:outputLabel value="In Progress" />
+            <apex:outputLabel value="Completed" />
+        </apex:panelGrid>
+
+        <apex:repeat value="{!storyList}" var="story">
+            <apex:panelGrid columns="4" styleClass="storyWrapper" columnClasses="column,column,column,column" width="100%">
+                <!-- Story Header -->
+
+                <apex:panelGroup styleClass="story">
+                    <c:Taskboard_Story story="{!story}" />
+
+                    <apex:outputPanel style="display: block;">
+                        <apex:panelGroup style="display: block; width: 70%; float: left; border: 1px solid black;">
+                            <apex:image rendered="{!AND(NOT(story.IsBlocked__c), NOT(story.IsLate__c))}" value="/img/samples/color_green.gif" height="12" width="{!story.CompletedRatio__c}%" />
+                            <apex:image rendered="{!AND(NOT(story.IsBlocked__c), AND(story.IsLate__c))}" value="/img/samples/color_yellow.gif" height="12" width="{!story.CompletedRatio__c}%" />
+                            <apex:image rendered="{!story.IsBlocked__c}" value="/img/samples/color_red.gif" height="12" width="{!story.CompletedRatio__c}%" />
+                        </apex:panelGroup>
+
+                        <apex:outputText value="{!story.CompletedRatio__c} %" style="display: block; width: 20%; float: right; text-align: right; white-space: nowrap; font-size: 90%;" />
+                    </apex:outputPanel>
+
+                    <apex:panelGrid columns="2" width="100%">
+
+                        <apex:panelGroup >
+                        </apex:panelGroup>
+                    </apex:panelGrid>
+                </apex:panelGroup>
+
+                <!-- Not Yet Started -->
+
+                <apex:panelGroup styleClass="taskList">
+                    <apex:repeat value="{!taskList}" var="task">
+                        <apex:outputPanel rendered="{!AND(task.Story__c == story.Id, task.Status__c == 'Not Yet Started')}">
+                            <c:Taskboard_Task task="{!task}" rerender="tbForm" status="tbStatus" />
+                        </apex:outputPanel>
+                    </apex:repeat>
+                </apex:panelGroup>
+
+                <!-- In Progress -->
+
+                <apex:panelGroup styleClass="taskList">
+                    <apex:repeat value="{!taskList}" var="task">
+                        <apex:outputPanel rendered="{!AND(task.Story__c == story.Id, task.Status__c == 'In Progress')}">
+                            <c:Taskboard_Task task="{!task}" rerender="tbForm" status="tbStatus" />
+                        </apex:outputPanel>
+                    </apex:repeat>
+                </apex:panelGroup>
+
+                <!-- Completed -->
+
+                <apex:panelGroup styleClass="taskList">
+                    <apex:repeat value="{!taskList}" var="task">
+                        <apex:outputPanel rendered="{!AND(task.Story__c == story.Id, task.Status__c == 'Completed')}">
+                            <c:Taskboard_Task task="{!task}" rerender="tbForm" status="tbStatus" />
+                        </apex:outputPanel>
+                    </apex:repeat>
+                </apex:panelGroup>
+            </apex:panelGrid>
+        </apex:repeat>
+    </apex:form>
+
+    <!-- Scripts that don't need to be reloaded -->
+
+    <script type="text/javascript" language="javascript">
+    function pickleapm__sprint_managetaskboard_incrementHours(button) {
+        var input = $(button).closest('.hoursWrapper').find('.hours:first').get(0);
+
+        if (input == undefined)
+            return;
+        if (input.value == '')
+            input.value = 0;
+    
+        input.value = Math.min (100, parseFloat(input.value) + 1);
+    }
+
+    function pickleapm__sprint_managetaskboard_decrementHours(button) {
+        var input = $(button).closest('.hoursWrapper').find('.hours:first').get(0);
+    
+        if (input == undefined)
+            return;
+        if (input.value == '')
+            input.value = 0;
+    
+        input.value = Math.max (0, parseFloat(input.value) - 1);
+    }
+    </script>
+    <style type="text/css">
+.headerWrapper .header {
+	background-color: #cccccc;
+	width: 25%;
+	padding: 1em;
+	text-align: center;
+	font-weight: bold;
+}
+
+.storyWrapper .column {
+	width: 25%;
+}
+
+.storyWrapper .mouseoverButton {
+	vertical-align: middle;
+}
+
+.storyWrapper .task {
+    background-color: #FFF046;
+    border: 1px solid #DDBB00;
+    opacity: 0.5;
+    margin: 1em;
+}
+
+.storyWrapper .taskBlocked {
+    border: 1px solid #A30000;
+}
+
+.storyWrapper .taskActive {
+    opacity: 1.0;
+}
+
+.storyWrapper .task .name {
+	font-weight: bold;
+	font-size: 110%;
+    padding: 1.0em;
+}
+
+.storyWrapper .task .body {
+    padding: 1.0em;
+}
+
+.storyWrapper .task .body .label {
+    white-space: nowrap;
+    width: 50%;
+    padding-right: 0.5em;
+}
+
+.storyWrapper .task .body .label .status {
+    display: none;
+}
+
+.storyWrapper .task .body .input .status {
+    display: none;
+}
+
+.storyWrapper .task .body .input .isBlocked input {
+    margin-left: 0;
+}
+
+.storyWrapper .task .timestamp {
+    background-color:#DDBB00;
+    border-top:1px solid #AA8800;
+    color:white;
+    font-size:80%;
+    padding: 0.2em 0.5em;
+    text-align:right;
+}
+
+.storyWrapper .taskBlocked .timestamp {
+    border-top: 1px solid #A30000;
+    background-color:#A30000;
+}
+
+</style>
+
+</apex:page>

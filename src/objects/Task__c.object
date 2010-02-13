@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Agile Process Management</description>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>ActualHours__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Actual Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>AssignedUserLink__c</fullName>
+        <formula>IF(NOT(ISBLANK(SprintUser__c)), HYPERLINK(&apos;/&apos; &amp; SprintUser__r.User__c, SprintUser__r.User__r.FirstName &amp; &apos; &apos; &amp; SprintUser__r.User__r.LastName, &apos;_self&apos;), NULL)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Assigned User</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>CompletedRatio__c</fullName>
+        <formula>IF(AND(EstimatedHours__c != 0, ActualHours__c != 0), ActualHours__c / EstimatedHours__c, IF(IsCompleted__c == true, 1, 0))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Completed %</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <label>Description</label>
+        <length>32000</length>
+        <trackHistory>true</trackHistory>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>EstimatedHours__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Estimated Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <trackHistory>true</trackHistory>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>HoursSummary__c</fullName>
+        <formula>IF (ActualHours__c &gt; 0, TEXT (ActualHours__c), &apos;-&apos;) &amp; &apos; / &apos; &amp;
+IF (EstimatedHours__c &gt; 0, TEXT (EstimatedHours__c), &apos;-&apos;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Hours</label>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>IsBlocked__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Blocked?</label>
+        <trackHistory>true</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsCompleted__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Completed?</label>
+        <trackHistory>true</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsInlineEdit__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>This field is only used when marking a task as in the process of doing an inline edit. It will be unset prior to any database save.</description>
+        <label>Is Inline Edit?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>IsLate__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Late?</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Position__c</fullName>
+        <label>#</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>RemainingHours__c</fullName>
+        <formula>MAX (0, EstimatedHours__c - ActualHours__c)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Remaining Hours</label>
+        <precision>18</precision>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>SprintUser__c</fullName>
+        <label>Assigned User</label>
+        <referenceTo>SprintUser__c</referenceTo>
+        <relationshipLabel>Tasks</relationshipLabel>
+        <relationshipName>Tasks</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Sprint__c</fullName>
+        <label>Sprint</label>
+        <referenceTo>Sprint__c</referenceTo>
+        <relationshipLabel>Tasks</relationshipLabel>
+        <relationshipName>Tasks</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <trackHistory>true</trackHistory>
+        <type>MasterDetail</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Not Yet Started</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Completed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackHistory>true</trackHistory>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Story__c</fullName>
+        <label>Story</label>
+        <referenceTo>Story__c</referenceTo>
+        <relationshipLabel>Tasks</relationshipLabel>
+        <relationshipName>Tasks</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <trackHistory>true</trackHistory>
+        <type>MasterDetail</type>
+    </fields>
+    <label>Task</label>
+    <nameField>
+        <label>Task Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Tasks</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Story__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Sprint__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>HoursSummary__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Status__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>ActualHours__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Status__c</lookupDialogsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Task_ActualHoursIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>OR(ISBLANK(ActualHours__c), ActualHours__c &lt; 0)</errorConditionFormula>
+        <errorDisplayField>ActualHours__c</errorDisplayField>
+        <errorMessage>Actual Hours cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_EstimatedHoursIsPositive</fullName>
+        <active>true</active>
+        <errorConditionFormula>OR(ISBLANK(EstimatedHours__c), EstimatedHours__c &lt; 0)</errorConditionFormula>
+        <errorDisplayField>EstimatedHours__c</errorDisplayField>
+        <errorMessage>Estimated Hours cannot be a negative number.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_IsNotGeneralBacklogSprint</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(Sprint__r.IsGeneralBacklog__c, NOT(ISPICKVAL(Status__c, &apos;Not Yet Started&apos;)))</errorConditionFormula>
+        <errorMessage>Cannot set a Task to In Progress or Completed on a General Backlog Sprint.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_IsUpdateWhenApprovalIsCompleted</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Story__r.ApprovalStatus__c, &apos;Completed&apos;)</errorConditionFormula>
+        <errorMessage>Cannot update a Task once the related Story&apos;s Approval Status is Completed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_IsUpdateWhenApprovalIsInProgress</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Story__r.ApprovalStatus__c, &apos;In Progress&apos;)</errorConditionFormula>
+        <errorMessage>Cannot update a Task once the related Story&apos;s Approval Status is In Progress.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_IsUpdateWhenSprintIsCompleted</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISPICKVAL(Sprint__r.Status__c, &apos;Completed&apos;)</errorConditionFormula>
+        <errorMessage>Cannot update a Task once the related Sprint&apos;s Status is Completed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_IsUpdateWhenWorkstreamNotActive</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(NOT(ISNULL( Sprint__r.Workstream__c)), NOT(Sprint__r.Workstream__r.IsActive__c))</errorConditionFormula>
+        <errorMessage>Cannot update a Task when the related Workstream exists and is inactive.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_SprintIsNotMissing</fullName>
+        <active>true</active>
+        <errorConditionFormula>ISNULL(Sprint__c)</errorConditionFormula>
+        <errorDisplayField>Sprint__c</errorDisplayField>
+        <errorMessage>Sprint cannot be missing.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Task_SprintStatusIsInProgress</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(Sprint__r.Status__c, &apos;Not Yet Started&apos;), NOT(ISPICKVAL(Status__c, &apos;Not Yet Started&apos;)))</errorConditionFormula>
+        <errorMessage>Sprint is not yet started.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Task_ManageTaskboard</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Manage Taskboard</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/pickleapm__sprint_managetaskboard?id={!Sprint__c.Id}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Task_ManageTasks</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>url</linkType>
+        <masterLabel>Manage Tasks</masterLabel>
+        <openType>sidebar</openType>
+        <protected>false</protected>
+        <url>/apex/pickleapm__story_managetasks?id={!Story__c.Id}</url>
+    </webLinks>
+</CustomObject>

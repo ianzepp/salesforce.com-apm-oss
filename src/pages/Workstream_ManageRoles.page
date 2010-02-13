@@ -1,0 +1,118 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Workstream__c" extensions="Workstream_ManageRoles">
+    <style type="text/css">
+    .list .dataRow .dataCell { vertical-align: text-bottom; }
+    .list .dataRow .actionColumn a.actionLink { vertical-align: text-bottom; }
+    </style>
+
+    <apex:variable value="{!Workstream__c}" var="workstream" />
+
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+    <apex:sectionHeader title="{!$ObjectType.Workstream__c.Label}" subtitle="{!$Label.Workstream_ManageRoles}" />
+
+    <apex:outputPanel style="display: block; margin-bottom: 1em; margin-top: 0em;">
+        <apex:outputText value="« " />
+        <apex:outputLink value="/{!workstream.Id}">Back to {!$ObjectType.Workstream__c.Label}: {!workstream.Name}</apex:outputLink>
+    </apex:outputPanel>
+    
+    <apex:form >
+        <apex:pageBlock id="pbWorkstreamRoles" title="{!$Label.Workstream_ExistingRoles}">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton rendered="{!NOT(workstreamRoleListIsInlineEdit)}" value="New Role" action="{!insertWorkstreamRole}" rerender="pbWorkstreamRoles" status="statusUpdating" />
+                <apex:commandButton rendered="{!workstreamRoleListIsInlineEdit}" value="{!$Label.Common_Save}" action="{!saveWorkstreamRoleList}" rerender="pbWorkstreamRoles" status="statusUpdating" />
+                <apex:commandButton rendered="{!workstreamRoleListIsInlineEdit}" value="{!$Label.Common_SaveAndNew}" action="{!saveWorkstreamRoleListAndInsert}" rerender="pbWorkstreamRoles" status="statusUpdating" />
+                <apex:commandButton rendered="{!workstreamRoleListIsInlineEdit}" value="{!$Label.Common_SaveAndReturn}" action="{!saveWorkstreamRoleListAndReturn}" />
+                <apex:commandButton rendered="{!workstreamRoleListIsInlineEdit}" value="{!$Label.Common_Cancel}" action="{!cancel}" immediate="true" />
+  
+                <apex:actionStatus id="statusUpdating">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" style="vertical-align: middle;" />
+                    </apex:facet> 
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+        
+            <apex:pageMessages />
+            
+            <apex:pageBlockTable value="{!workstreamRoleList}" var="workstreamRole" rendered="{!workstreamRoleListSize != 0}">
+                <apex:column headerClass="actionColumn" styleClass="actionColumn" style="padding-right: 1em;">
+                    <apex:facet name="header">{!$Label.Common_Action}</apex:facet>
+                    
+                    <apex:outputPanel rendered="{!NOT(workstreamRole.IsInlineEdit__c)}">
+                        <apex:commandLink styleClass="actionLink" action="{!enableWorkstreamRoleIsInlineEdit}" value="{!$Label.Common_Edit}" rerender="pbWorkstreamRoles" status="statusUpdating">
+                            <apex:param name="selectedId" value="{!workstreamRole.Id}" />
+                        </apex:commandLink>
+                        
+                        <apex:outputText value=" | " />
+
+                        <apex:commandLink styleClass="actionLink" action="{!deleteWorkstreamRole}" value="{!$Label.Common_DeleteShort}" onclick="return confirm('{!$Label.Common_AreYouSure}');">
+                            <apex:param name="selectedId" value="{!workstreamRole.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!AND(workstreamRole.IsInlineEdit__c, NOT(ISBLANK(workstreamRole.Id)))}">
+                        <apex:commandLink action="{!cancelWorkstreamRoleIsInlineEdit}" value="{!$Label.Common_Cancel}" styleClass="actionLink" rerender="pbWorkstreamRoles" status="statusUpdating" immediate="true">
+                            <apex:param name="selectedId" value="{!workstreamRole.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!AND(workstreamRole.IsInlineEdit__c, ISBLANK(workstreamRole.Id))}">
+                        <apex:commandLink action="{!cancelInsertWorkstreamRole}" value="{!$Label.Common_Cancel}" styleClass="actionLink" rerender="pbWorkstreamRoles" status="statusUpdating" immediate="true" />
+                    </apex:outputPanel>
+                </apex:column> 
+
+                <!-- Column : Name -->
+
+                <apex:column >
+                    <apex:facet name="header">{!$ObjectType.WorkstreamRole__c.Fields.Name.Label}</apex:facet>
+                    <apex:outputPanel rendered="{!NOT(workstreamRole.IsInlineEdit__c)}">
+                        <apex:outputLink value="/{!workstreamRole.Id}">{!workstreamRole.Name}</apex:outputLink>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!workstreamRole.IsInlineEdit__c}">
+                        <apex:inputField value="{!workstreamRole.Name}" style="width: 95%;" required="true"/>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column : Is Global? -->
+
+                <apex:column width="10%">
+                    <apex:facet name="header">{!$ObjectType.WorkstreamRole__c.Fields.IsGlobal__c.Label}</apex:facet>
+                    <apex:outputField rendered="{!NOT(workstreamRole.IsInlineEdit__c)}" value="{!workstreamRole.IsGlobal__c}" />
+                    <apex:inputField rendered="{!workstreamRole.IsInlineEdit__c}" value="{!workstreamRole.IsGlobal__c}" />
+                </apex:column>
+
+                <!-- Column : Is Active? -->
+
+                <apex:column width="10%">
+                    <apex:facet name="header">{!$ObjectType.WorkstreamRole__c.Fields.IsActive__c.Label}</apex:facet>
+                    <apex:outputField rendered="{!NOT(workstreamRole.IsInlineEdit__c)}" value="{!workstreamRole.IsActive__c}" />
+                    <apex:inputField rendered="{!workstreamRole.IsInlineEdit__c}" value="{!workstreamRole.IsActive__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+
+            <apex:outputPanel rendered="{!workstreamRoleListSize == 0}">
+                <apex:outputText value="{!$Label.Common_NoRecordsToDisplay}" />
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

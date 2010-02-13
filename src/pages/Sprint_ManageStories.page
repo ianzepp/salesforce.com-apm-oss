@@ -1,0 +1,360 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Sprint__c" extensions="Sprint_ManageStories">
+    <style type="text/css">
+.list .dataRow .dataCell,.list .dataRow .dataCell .lookupInput .lookupIcon
+    {
+    vertical-align: middle;
+}
+
+.list .dataRow .actionColumn a.actionLink {
+    vertical-align: middle;
+}
+
+/* Stolen from the salesforce CSS */
+.pbStoriesTable .dataRow .inlineEditLockOn {
+    -moz-background-clip: border;
+    -moz-background-inline-policy: continuous;
+    -moz-background-origin: padding;
+    background: transparent url(/img/func_icons/util/lock12.gif) no-repeat
+        scroll 100% 2px;
+}
+
+.pbStoriesTable tr.dataRow td.inlineEditWriteOn {
+    -moz-background-clip: border;
+    -moz-background-inline-policy: continuous;
+    -moz-background-origin: padding;
+    background: transparent url(/img/func_icons/util/pencil12.gif) no-repeat
+        scroll 100% 2px;
+}
+
+.pbStoriesTable .nameEdit input,.pbStoriesTable .nameEdit textarea {
+    width: 90%;
+}
+</style>
+
+    <!-- Resource URL variables -->
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-handle.png')}" var="handleUrl" />
+    <apex:variable value="{!Sprint__c}" var="sprint" />
+
+    <!-- Scripts -->
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+
+    <!-- Section header and breadcrumbs -->
+    <apex:sectionHeader title="{!$ObjectType.Sprint__c.Label}" subtitle="{!$Label.Sprint_ManageStories}" />
+
+    <apex:outputPanel style="display: block; margin-bottom: 1em; margin-top: 0em;">
+        <apex:outputText value="« " />
+        <apex:outputLink value="/{!sprint.Id}">Back to {!$ObjectType.Sprint__c.Label}: {!sprint.Name}</apex:outputLink>
+    </apex:outputPanel>
+
+    <apex:form id="pbForm">
+        <!-- Save certain variables for easy reference -->
+        <apex:variable value="{!Sprint__c.Workstream__c}" var="sprintWorkstreamId" />
+        <apex:variable value="{!Sprint__c.Status__c == 'Completed'}" var="isSprintCompleted" />
+        <apex:variable value="{!Sprint__c.Status__c == 'In Progress'}" var="isSprintInProgress" />
+        <apex:variable value="{!Sprint__c.IsGeneralBacklog__c}" var="isSprintGeneralBacklog" />
+        <apex:variable value="{!storyListSize == 0}" var="isSprintEmpty" />
+    
+        <apex:pageBlock title="{!$Label.Sprint_ManageStories}">
+            <apex:pageBlockButtons location="top">
+                <apex:outputPanel rendered="{!NOT(Sprint__c.IsGeneralBacklog__c)}" style="display: block; float: right; vertical-align: middle; margin-right: 1em;">
+                    <apex:inputCheckbox style="vertical-align: text-bottom;" value="{!includeBacklog}">
+                        <apex:actionSupport event="onchange" action="{!updateIncludeBacklog}" rerender="pbForm" status="statusUpdating" />
+                    </apex:inputCheckbox>
+                    <apex:outputText value="Include Backlog?" />
+                </apex:outputPanel>
+
+                <apex:commandButton rendered="{!NOT(storyListIsInlineEdit)}" value="{!$Label.Common_New} {!$ObjectType.Story__c.Label}" action="{!insertStory}" rerender="pbForm" status="statusUpdating" />
+                <apex:commandButton rendered="{!NOT(storyListIsInlineEdit)}" disabled="{!isSprintEmpty}" value="{!$Label.Sprint_ManageTasks}" action="{!redirectManageTasks}" immediate="true" />
+                <apex:commandButton rendered="{!NOT(storyListIsInlineEdit)}" disabled="{!isSprintEmpty}" value="Edit All" action="{!enableStoryListIsInlineEdit}" rerender="pbForm" status="statusUpdating" immediate="true" />
+
+                <apex:commandButton rendered="{!storyListIsInlineEdit}" value="{!$Label.Common_Save}" action="{!saveStoryList}" rerender="pbForm" status="statusUpdating" />
+                <apex:commandButton rendered="{!storyListIsInlineEdit}" value="{!$Label.Common_SaveAndNew}" action="{!saveStoryListAndInsert}" rerender="pbForm" status="statusUpdating" />
+                <apex:commandButton rendered="{!storyListIsInlineEdit}" value="{!$Label.Common_SaveAndReturn}" action="{!saveStoryListAndReturn}" />
+                <apex:commandButton rendered="{!storyListIsInlineEdit}" value="{!$Label.Common_Cancel}" action="{!cancel}" rerender="pbForm" status="statusUpdating" immediate="true" />
+
+                <apex:actionStatus id="statusUpdating">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" style="vertical-align: middle;" />
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+
+            <!--  Status warning messages -->
+            <apex:pageMessage severity="Warning" strength="2" title="{!$Label.Common_Warning}:" summary="Sprint has already been completed. No changes will be permitted." rendered="{!isSprintCompleted}" />
+
+            <apex:pageMessage severity="Info" strength="2" title="{!$Label.Common_Notice}:" summary="Sprint is not yet started." rendered="{!AND(NOT(isSprintCompleted),NOT(isSprintInProgress))}" />
+
+            <apex:pageMessage severity="Info" strength="2" title="{!$Label.Common_Notice}:" summary="This is a General Backlog Sprint." rendered="{!isSprintGeneralBacklog}" />
+
+            <apex:pageMessages />
+
+            <!-- Confirmation when a story is requested to be deleted -->
+            <apex:pageMessage rendered="{!NOT(ISBLANK(removedStory))}" severity="Warning" strength="2" title="{!$Label.Common_Warning}:" summary="You have requested that the story '{!removedStory.Name}' is removed from this sprint, and re-assigned to the workstream backlog. Are you sure?">
+                <apex:outputPanel style="display: block; margin-left: 0.5em; margin-top: 0.5em">
+                    <apex:commandButton value="Confirm" action="{!confirmRemoveStory}" rerender="pbForm" status="statusUpdating" />
+                    <apex:commandButton value="Cancel" action="{!cancelRemoveStory}" rerender="pbForm" status="statusUpdating" />
+                </apex:outputPanel>
+            </apex:pageMessage>
+
+            <!--
+              -- This is the main display section. Columns are displayed in the following order:
+              --    Sorting Handle 
+              --    Action Links
+              --    Story Position
+              --    Story Name
+              --    User Role
+              --    Points
+              --    Hours Summary
+              --    Task Status
+              --    Approval Status
+              --
+              -->
+            <apex:pageBlockTable value="{!storyList}" var="story" id="pbStoriesTable" styleClass="pbStoriesTable" rendered="{!storyListSize != 0}">
+                <!-- Column: Drag and Drop Handle -->
+
+                <apex:column styleClass="booleanColumn" headerClass="booleanColumn">
+                    <apex:image value="{!handleUrl}" styleClass="handle" />
+                </apex:column>
+
+                <!-- Column: Action Links -->  
+
+                <apex:column headerClass="actionColumn" styleClass="actionColumn">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$Label.Common_Action}" />
+                    </apex:facet>
+
+                    <apex:outputPanel rendered="{!AND(NOT(story.IsInlineEdit__c), story.Sprint__c == sprint.Id)}">
+                        <apex:commandLink action="{!enableStoryIsInlineEdit}" value="{!$Label.Common_Edit}" styleClass="actionLink {!story.Id}_ilelink" rerender="pbForm" status="statusUpdating">
+                            <apex:param name="selectedId" value="{!story.Id}" />
+                        </apex:commandLink>
+
+                        <apex:outputText value=" | " />
+
+                        <apex:commandLink action="{!removeStory}" value="{!$Label.Common_DeleteShort}" styleClass="actionLink" rerender="pbForm" status="statusUpdating" rendered="{!NOT(sprint.IsGeneralBacklog__c)}">
+                            <apex:param name="selectedId" value="{!story.Id}" />
+                        </apex:commandLink>
+
+                        <apex:commandLink action="{!deleteStory}" value="{!$Label.Common_DeleteShort}" styleClass="actionLink" rerender="pbForm" status="statusUpdating" rendered="{!sprint.IsGeneralBacklog__c}" onclick="return confirm('Are you sure?');">
+                            <apex:param name="selectedId" value="{!story.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!AND(story.IsInlineEdit__c, NOT(ISBLANK(story.Id)))}">
+                        <apex:commandLink action="{!cancelStoryIsInlineEdit}" value="{!$Label.Common_Cancel}" styleClass="actionLink" rerender="pbForm" status="statusUpdating" immediate="true">
+                            <apex:param name="selectedId" value="{!story.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!AND(story.IsInlineEdit__c, ISBLANK(story.Id))}">
+                        <apex:commandLink action="{!cancelInsertStory}" value="{!$Label.Common_Cancel}" styleClass="actionLink" rerender="pbForm" status="statusUpdating" immediate="true" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!story.Sprint__c != sprint.Id}">
+                        <apex:commandLink action="{!assignStory}" value="Add" styleClass="actionLink" rerender="pbForm" status="statusUpdating" immediate="true" >
+                            <apex:param name="selectedId" value="{!story.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Story Position -->
+
+                <apex:column styleclass="booleanColumn" headerClass="booleanColumn" footerClass="booleanColumn">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.Position__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="positionEdit" style="display: none;">
+                        <apex:inputField value="{!story.Position__c}" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="position" rendered="{!NOT(story.IsInlineEdit__c)}">
+                        <apex:outputField value="{!story.Position__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Story Name and Description -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();" width="30%">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.Name.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="nameEdit" rendered="{!story.IsInlineEdit__c}">
+                        <apex:inputField value="{!story.Name}" required="true" />
+                        <apex:inputField value="{!story.Description__c}" required="false" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="name" rendered="{!NOT(story.IsInlineEdit__c)}">
+                        <apex:outputLink value="/{!story.Id}">
+                            <apex:outputField value="{!story.Name}" />
+                        </apex:outputLink>
+
+                        <apex:outputPanel style="color: gray; font-size: 90%; padding-left: 0.5em;" rendered="{!NOT(ISBLANK(story.Description__c))}">
+                            <apex:outputLabel value=" - " />
+                            <apex:outputField value="{!story.Description__c}" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: User Role -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();" style="white-space:nowrap;">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.WorkstreamRole__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="workstreamRoleEdit" rendered="{!story.IsInlineEdit__c}">
+                        <apex:selectList value="{!story.WorkstreamRole__c}" size="1">
+                            <apex:selectOptions value="{!workstreamRoleOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="workstreamRole" rendered="{!NOT(story.IsInlineEdit__c)}">
+                        <apex:outputLink value="/{!story.WorkstreamRole__c}">
+                            <apex:outputText value="{!story.WorkstreamRole__r.Name}" />
+                        </apex:outputLink>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Points -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.Points__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="pointsEdit" rendered="{!story.IsInlineEdit__c}">
+                        <apex:inputField value="{!story.Points__c}" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="points" rendered="{!NOT(story.IsInlineEdit__c)}">
+                        <apex:outputField value="{!story.Points__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Hours Summary -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.HoursSummary__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:outputField value="{!story.HoursSummary__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Task Status -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.TaskStatus__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:commandLink action="{!redirectManageTasks}">
+                            <apex:outputText value="{!story.TaskStatus__c}" />
+                            <apex:param name="selectedStoryId" value="{!story.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Approval Status -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.ApprovalStatus__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel >
+                        <apex:outputText value="{!story.ApprovalStatus__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Assigned User : Not displayed for general backlog sprints -->
+
+                <apex:column ondblclick="$('.{!story.Id}_ilelink').click();" style="white-space:nowrap;" rendered="{!NOT(isSprintGeneralBacklog)}">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Story__c.Fields.SprintUser__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="sprintUserEdit" rendered="{!story.IsInlineEdit__c}">
+                        <apex:selectList value="{!story.SprintUser__c}" size="1">
+                            <apex:selectOptions value="{!sprintUserOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="sprintUser" rendered="{!NOT(story.IsInlineEdit__c)}">
+                        <apex:outputField value="{!story.SprintUser__r.User__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+            </apex:pageBlockTable>
+
+            <apex:outputPanel styleClass="{!sprint.Id}_confirmsorting_stories" style="padding-top: 1em; display: none">
+                <apex:outputText value="Story sorting positions have changed: " />
+                <apex:commandLink value="Save" action="{!saveStoryList}" rerender="pbForm" status="statusUpdating" />
+                <apex:outputText value=" - " />
+                <apex:commandLink value="Cancel" action="{!cancel}" rerender="pbForm" status="statusUpdating" />
+            </apex:outputPanel>
+
+            <apex:pageBlockSection columns="1" rendered="{!storyListSize == 0}">
+                <apex:outputText value="{!$Label.Common_NoRecordsToDisplay}" />
+            </apex:pageBlockSection>
+
+            <!--
+              -- Jquery sorting for the story list
+              -->
+
+            <script type="text/javascript">
+            $('.pbStoriesTable').sortable({
+                items: '.dataRow',
+                opacity: 1.0,
+                
+                start: function (event, ui) {
+                    $(ui.item).get(0).style.width = '400px';
+                    $(ui.item).get(0).style.border = '1px solid #E3DEB8';
+                },
+                
+                stop: function (event, ui) {
+                    $(ui.item).get(0).style.width = '100%';
+                },
+                
+                update: function (event, ui) {
+                    $('.dataRow').removeClass('last');
+                    $('.dataRow').addClass('first');
+                    $('.dataRow').each(function (index) {
+                        $(this).find('.position span').get(0).textContent = index + 1;
+                        $(this).find('.positionEdit input').get(0).value = index + 1;
+                    });
+                    $('.{!sprint.Id}_confirmsorting_stories').get(0).style.display = 'block';
+                }
+            });
+            </script>
+        </apex:pageBlock>
+    </apex:form>
+
+    <apex:form id="pbGeneralBacklogForm">
+        
+    </apex:form>
+</apex:page>

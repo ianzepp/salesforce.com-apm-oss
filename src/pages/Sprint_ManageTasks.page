@@ -1,0 +1,344 @@
+<!--
+ * Agile Process Management (OSS)
+ *
+ * Copyright (C) 2009 - 2010, Ian Zepp <ian.zepp@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *-->
+
+<apex:page standardController="Sprint__c" extensions="Sprint_ManageTasks">
+    <style type="text/css">
+.list .dataRow .dataCell,.list .dataRow .dataCell .lookupInput .lookupIcon
+    {
+    vertical-align: middle; 
+}
+
+.list .dataRow .actionColumn a.actionLink {
+    vertical-align: middle;
+}
+
+.pbSelectedTasksTable .nameEdit input,.pbSelectedTasksTable .nameEdit textarea
+    {
+    width: 90%;
+}
+
+.pbSelectedTasksTable .hoursWrapper .hours {
+    width: 5em;
+}
+
+.pbSelectedTasksTable .incrementHoursButton,.pbSelectedTasksTable .decrementHoursButton
+    {
+    vertical-align: middle;
+}
+</style>
+
+    <!-- Resource URL variables -->
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-handle.png')}" var="handleUrl" />
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-minus.gif')}" var="decrementButtonUrl" />
+    <apex:variable value="{!URLFOR($Resource.BundledResources, 'bundled-resources/images/icon-plus.gif')}" var="incrementButtonUrl" />
+    <apex:variable value="{!Sprint__c}" var="sprint" />
+
+    <!-- Scripts -->
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" />
+
+    <!-- Section header and breadcrumbs -->
+    <apex:sectionHeader title="{!$ObjectType.Sprint__c.Label}" subtitle="{!$Label.Sprint_ManageTasks}" />
+
+    <apex:outputPanel style="display: block; margin-bottom: 1em; margin-top: 0em;">
+        <apex:outputText value="« " />
+        <apex:outputLink value="/{!sprint.Id}">Back to {!$ObjectType.Sprint__c.Label}: {!sprint.Name}</apex:outputLink>
+    </apex:outputPanel>
+
+    <apex:form id="pbForm">
+        <!-- Save certain variables for easy reference -->
+        <apex:variable value="{!Sprint__c.Workstream__c}" var="sprintWorkstreamId" />
+        <apex:variable value="{!Sprint__c.Status__c == 'Completed'}" var="isSprintCompleted" />
+        <apex:variable value="{!Sprint__c.Status__c == 'In Progress'}" var="isSprintInProgress" />
+        <apex:variable value="{!Sprint__c.IsGeneralBacklog__c}" var="isSprintGeneralBacklog" />
+        <apex:variable value="{!storyListSize == 0}" var="isSprintEmpty" />
+
+        <apex:pageBlock title="{!$Label.Sprint_ManageTasks}">
+            <apex:pageBlockButtons location="top">
+                <apex:outputPanel styleClass="selectedStory" style="float: right">
+                    <apex:outputText style="padding-left: 1em;">Select a Story:</apex:outputText>
+                    <apex:selectList value="{!selectedStoryId}" size="1" disabled="{!isSprintEmpty}">
+                        <apex:selectOptions value="{!selectedStoryOptions}" />
+                        <apex:actionSupport event="onchange" action="{!updateSelectedStory}" rerender="pbForm" status="statusUpdating" />
+                    </apex:selectList>
+                </apex:outputPanel>
+
+                <apex:commandButton rendered="{!NOT(taskListIsInlineEdit)}" disabled="{!ISBLANK(selectedStoryId)}" value="{!$Label.Common_New} {!$ObjectType.Task__c.Label}" action="{!insertTask}" rerender="pbForm" status="statusUpdating" />
+                <apex:commandButton rendered="{!NOT(taskListIsInlineEdit)}" value="{!$Label.Sprint_ManageStories}" action="{!redirectManageStories}" immediate="true" />
+                <apex:commandButton rendered="{!NOT(taskListIsInlineEdit)}" disabled="{!taskListSize == 0}" value="Edit All" action="{!enableTaskListIsInlineEdit}" rerender="pbForm" status="statusUpdating" immediate="true" />
+
+                <apex:commandButton rendered="{!taskListIsInlineEdit}" value="{!$Label.Common_Save}" action="{!saveTaskList}" rerender="pbForm" status="statusUpdating" />
+                <apex:commandButton rendered="{!taskListIsInlineEdit}" value="{!$Label.Common_SaveAndNew}" action="{!saveTaskListAndInsert}" rerender="pbForm" status="statusUpdating" />
+                <apex:commandButton rendered="{!taskListIsInlineEdit}" value="{!$Label.Common_SaveAndReturn}" action="{!saveTaskListAndReturn}" />
+                <apex:commandButton rendered="{!taskListIsInlineEdit}" value="{!$Label.Common_Cancel}" action="{!cancelTaskListIsInlineEdit}" rerender="pbForm" status="statusUpdating" immediate="true" />
+
+                <apex:actionStatus id="statusUpdating">
+                    <apex:facet name="start">
+                        <apex:image value="/img/loading.gif" style="vertical-align: middle;" />
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockButtons>
+
+            <!--  Status warning messages -->
+            <apex:pageMessage severity="Warning" strength="2" title="{!$Label.Common_Warning}:" summary="Sprint has already been completed. No changes will be permitted." rendered="{!isSprintCompleted}" />
+
+            <apex:pageMessage severity="Info" strength="2" title="{!$Label.Common_Notice}:" summary="Sprint is not yet started. No changes to 'Actual Hours' or 'Status' will be permitted." rendered="{!AND(NOT(isSprintCompleted),NOT(isSprintInProgress))}" />
+
+            <apex:pageMessage severity="Info" strength="2" title="{!$Label.Common_Notice}:" summary="This story is associated with a General Backlog Sprint. No changes to 'Actual Hours' or 'Status' will be permitted." rendered="{!isSprintGeneralBacklog}" />
+
+            <apex:pageMessage severity="Info" strength="2" title="{!$Label.Common_Notice}:" summary="Please select a story from the dropdown menu." rendered="{!AND(NOT(isSprintEmpty),ISBLANK(selectedStoryId))}" />
+
+            <apex:pageMessage severity="Warning" strength="2" title="{!$Label.Common_Warning}:" summary="There are no Stories assigned to this Sprint." rendered="{!isSprintEmpty}">
+                <apex:outputLink value="{!$Page.Sprint_ManageStories}" style="display: block;margin-left: 1em;">
+                    <apex:param name="id" value="{!Sprint__c.Id}" />
+                    <apex:outputText value="Click here to manage your stories." />
+                </apex:outputLink>
+            </apex:pageMessage>
+
+            <apex:pageMessages />
+
+            <!--
+              -- Task list for a selected story. Columns are:
+              --    Sorting Handle 
+              --    Actions
+              --    Name
+              --    Assigned User
+              --    Status
+              --    Estimated Hours
+              --    Actual Hours 
+              -->
+
+            <apex:pageBlockTable value="{!selectedStoryTaskList}" var="task" rendered="{!selectedStoryTaskListSize != 0}" styleClass="pbSelectedTasksTable" id="pbSelectedTasksTable">
+                <!-- Column: Drag and Drop Handle -->
+
+                <apex:column styleClass="booleanColumn" headerClass="booleanColumn">
+                    <apex:image value="{!handleUrl}" styleClass="handle" />
+                </apex:column>
+
+                <!-- Column: Action Links -->
+
+                <apex:column styleClass="actionColumn">
+                    <apex:facet name="header">{!$Label.Common_Action}</apex:facet>
+
+                    <apex:outputPanel rendered="{!NOT(task.IsInlineEdit__c)}">
+                        <apex:commandLink action="{!enableTaskIsInlineEdit}" value="{!$Label.Common_Edit}" styleClass="actionLink {!task.Id}_ilelink" rerender="pbForm" status="statusUpdating">
+                            <apex:param name="selectedId" value="{!task.Id}" />
+                        </apex:commandLink>
+
+                        <apex:outputText >&nbsp;|&nbsp;</apex:outputText>
+
+                        <apex:commandLink action="{!deleteTask}" value="{!$Label.Common_DeleteShort}" styleClass="actionLink" rerender="pbForm" status="statusUpdating">
+                            <apex:param name="selectedId" value="{!task.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!AND(task.IsInlineEdit__c, NOT(ISBLANK(task.Id)))}">
+                        <apex:commandLink action="{!cancelTaskIsInlineEdit}" value="{!$Label.Common_Cancel}" styleClass="actionLink" rerender="pbForm" status="statusUpdating">
+                            <apex:param name="selectedId" value="{!task.Id}" />
+                        </apex:commandLink>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!AND(task.IsInlineEdit__c, ISBLANK(task.Id))}">
+                        <apex:commandLink action="{!cancelInsertTask}" value="{!$Label.Common_Cancel}" styleClass="actionLink" rerender="pbForm" status="statusUpdating" immediate="true" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Position -->
+
+                <apex:column styleclass="booleanColumn" headerClass="booleanColumn" footerClass="booleanColumn">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Task__c.Fields.Position__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="positionEdit" style="display: none;">
+                        <apex:inputField value="{!task.Position__c}" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="position" rendered="{!NOT(task.IsInlineEdit__c)}">
+                        <apex:outputField value="{!task.Position__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Name -->
+
+                <apex:column ondblclick="$('.{!task.Id}_ilelink').click();" width="30%">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Task__c.Fields.Name.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="nameEdit" rendered="{!task.IsInlineEdit__c}">
+                        <apex:inputField value="{!task.Name}" required="true" />
+                        <apex:inputField value="{!task.Description__c}" rendered="{!task.IsInlineEdit__c}" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="name" rendered="{!NOT(task.IsInlineEdit__c)}">
+                        <apex:outputLink value="/{!task.Id}">{!task.Name}</apex:outputLink>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="name" rendered="{!AND(NOT(task.IsInlineEdit__c), NOT(ISBLANK(task.Description__c)))}" style="font-size: 90%; font-style: italic; color: #8e8e8e;">
+                        <apex:outputText value=" - " />
+                        <apex:outputText value="{!task.Description__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Status -->
+
+                <apex:column ondblclick="$('.{!task.Id}_ilelink').click();" style="white-space:nowrap;">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Task__c.Fields.Status__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="statusEdit" rendered="{!AND(NOT(isSprintGeneralBacklog),task.IsInlineEdit__c)}">
+                        <apex:outputPanel style="display: block;">
+                            <apex:inputField value="{!task.Status__c}" />
+                        </apex:outputPanel>
+
+                        <apex:outputPanel style="display: block;" rendered="{!task.Status__c != 'Completed'}">
+                            <apex:inputField value="{!task.IsBlocked__c}">{!$ObjectType.Task__c.Fields.IsBlocked__c.Label}</apex:inputField>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="status" rendered="{!OR(isSprintGeneralBacklog,NOT(task.IsInlineEdit__c))}">
+                        <apex:outputField value="{!task.Status__c}" rendered="{!NOT(task.IsBlocked__c)}" />
+                        <apex:outputLabel value="Blocked" rendered="{!task.IsBlocked__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Estimated Hours -->
+
+                <apex:column ondblclick="$('.{!task.Id}_ilelink').click();" style="white-space:nowrap;">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Task__c.Fields.EstimatedHours__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="estimatedHoursEdit" rendered="{!AND(NOT(isSprintCompleted), task.Status__c != 'Completed', task.IsInlineEdit__c)}" styleClass="hoursWrapper">
+                        <apex:inputField value="{!task.EstimatedHours__c}" styleClass="hours" />
+                        <apex:image value="{!incrementButtonUrl}" styleClass="mouseoverButton incrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetasks_incrementHours(this);" />
+                        <apex:image value="{!decrementButtonUrl}" styleClass="mouseoverButton decrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetasks_decrementHours(this);" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="estimatedHours" rendered="{!OR(isSprintCompleted, task.Status__c == 'Completed', NOT(task.IsInlineEdit__c))}">
+                        <apex:outputText value="{!task.EstimatedHours__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Actual Hours -->
+
+                <apex:column ondblclick="$('.{!task.Id}_ilelink').click();" style="white-space:nowrap;">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Task__c.Fields.ActualHours__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel rendered="{!AND(NOT(isSprintGeneralBacklog), NOT(isSprintCompleted), task.Status__c != 'Completed', task.IsInlineEdit__c)}" styleClass="hoursWrapper">
+                        <apex:inputField value="{!task.ActualHours__c}" styleClass="hours" />
+                        <apex:image value="{!incrementButtonUrl}" styleClass="mouseoverButton incrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetasks_incrementHours(this);" />
+                        <apex:image value="{!decrementButtonUrl}" styleClass="mouseoverButton decrementHoursButton" onmouseover="this.style.opacity = 1.0;" onmouseout="this.style.opacity = 0.7;" onclick="pickleapm__sprint_managetasks_decrementHours(this);" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!OR(isSprintGeneralBacklog, isSprintCompleted, task.Status__c == 'Completed', NOT(task.IsInlineEdit__c))}">
+                        <apex:outputText value="{!task.ActualHours__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+                <!-- Column: Assigned User -->
+
+                <apex:column ondblclick="$('.{!task.Id}_ilelink').click();" style="white-space:nowrap;">
+                    <apex:facet name="header">
+                        <apex:outputText value="{!$ObjectType.Task__c.Fields.SprintUser__c.Label}" />
+                    </apex:facet>
+
+                    <apex:outputPanel styleClass="sprintUserEdit" rendered="{!AND(NOT(isSprintGeneralBacklog),task.IsInlineEdit__c)}">
+                        <apex:selectList value="{!task.SprintUser__c}" size="1">
+                            <apex:selectOptions value="{!sprintUserOptions}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel styleClass="sprintUser" rendered="{!NOT(task.IsInlineEdit__c)}">
+                        <apex:outputField value="{!task.SprintUser__r.User__c}" />
+                    </apex:outputPanel>
+                </apex:column>
+
+            </apex:pageBlockTable>  
+
+            <apex:outputPanel styleClass="{!sprint.Id}_confirmsorting_storytasks" style="padding-top: 1em; display: none">
+                <apex:outputText value="Task sorting positions have changed: " />
+                <apex:commandLink value="Save" action="{!saveTaskList}" rerender="pbForm" status="statusUpdating" />
+                <apex:outputText value=" - " />
+                <apex:commandLink value="Cancel" action="{!cancel}" rerender="pbForm" status="statusUpdating" />
+            </apex:outputPanel>
+
+            <apex:pageBlockSection columns="1" rendered="{!AND(NOT(ISBLANK(selectedStoryId)), selectedStoryTaskListSize == 0)}">
+                <apex:outputText value="{!$Label.Common_NoRecordsToDisplay}" />
+            </apex:pageBlockSection>
+
+            <script type="text/javascript">
+            $('.pbSelectedTasksTable').sortable({
+                items: '.dataRow',
+                opacity: 1.0,
+                
+                start: function (event, ui) {
+                    $(ui.item).get(0).style.width = '400px';
+                    $(ui.item).get(0).style.border = '1px solid #E3DEB8';
+                },
+                
+                stop: function (event, ui) {
+                    $(ui.item).get(0).style.width = '100%';
+                },
+                
+                update: function (event, ui) {
+                    $('.dataRow').removeClass('last');
+                    $('.dataRow').addClass('first');
+                    $('.dataRow').each(function (index) {
+                        $(this).find('.position span').get(0).textContent = index + 1;
+                        $(this).find('.positionEdit input').get(0).value = index + 1;
+                    });
+                    $('.{!sprint.Id}_confirmsorting_storytasks').get(0).style.display = 'block';
+                }
+            });
+            </script>
+        </apex:pageBlock>
+
+    </apex:form>
+
+    <!-- Scripts that don't need to be reloaded -->
+
+    <script type="text/javascript" language="javascript">
+    function pickleapm__sprint_managetasks_incrementHours(button) {
+        var input = $(button).closest('.hoursWrapper').find('.hours:first').get(0);
+
+        if (input == undefined)
+            return;
+        if (input.value == '')
+            input.value = 0;
+    
+        input.value = Math.min (100, parseFloat(input.value) + 1);
+    }
+
+    function pickleapm__sprint_managetasks_decrementHours(button) {
+        var input = $(button).closest('.hoursWrapper').find('.hours:first').get(0);
+    
+        if (input == undefined)
+            return;
+        if (input.value == '')
+            input.value = 0;
+    
+        input.value = Math.max (0, parseFloat(input.value) - 1);
+    }
+    </script>
+</apex:page>
