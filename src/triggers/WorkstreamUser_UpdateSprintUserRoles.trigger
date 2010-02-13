@@ -18,10 +18,10 @@
  */
 
 trigger WorkstreamUser_UpdateSprintUserRoles on WorkstreamUser__c (after update) {
-	//
-	// Get a list of affected sprint users
-	//
-	
+    //
+    // Get a list of affected sprint users
+    //
+    
     List<SprintUser__c> sprintUserList = [
         select WorkstreamUser__c
           from SprintUser__c
@@ -36,11 +36,11 @@ trigger WorkstreamUser_UpdateSprintUserRoles on WorkstreamUser__c (after update)
     //
     
     for(WorkstreamUser__c workstreamUser : Trigger.new) {
-    	for(SprintUser__c sprintUser : sprintUserList) {
-    		if (sprintUser.WorkstreamUser__c != workstreamUser.Id)
-    		    continue;
-    		sprintUser.WorkstreamRole__c = workstreamUser.WorkstreamRole__c;
-    	}
+        for(SprintUser__c sprintUser : sprintUserList) {
+            if (sprintUser.WorkstreamUser__c != workstreamUser.Id)
+                continue;
+            sprintUser.WorkstreamRole__c = workstreamUser.WorkstreamRole__c;
+        }
     }
 
     update sprintUserList;

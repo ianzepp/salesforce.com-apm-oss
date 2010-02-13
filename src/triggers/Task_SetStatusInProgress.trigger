@@ -19,12 +19,12 @@
 
 trigger Task_SetStatusInProgress on Task__c (before insert, before update) {
     for(Task__c task : Trigger.new) {
-    	if (task.Status__c == 'In Progress')
-    	    continue;
+        if (task.Status__c == 'In Progress')
+            continue;
         if (task.Status__c == 'Completed')
             continue;
-    	if (task.ActualHours__c == 0)
-    	    continue;
-    	task.Status__c = 'In Progress';
+        if (task.ActualHours__c == 0)
+            continue;
+        task.Status__c = 'In Progress';
     }
 }

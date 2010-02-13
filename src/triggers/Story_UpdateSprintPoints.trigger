@@ -25,10 +25,10 @@ trigger Story_UpdateSprintPoints on Story__c (after insert, after update, after 
     Set<Id> sprintIds = new Set<Id>();
     
     for(Story__c story : Trigger.isDelete ? Trigger.old : Trigger.new) {
-    	if (Trigger.isDelete || Trigger.isInsert)
-    	    sprintIds.add(story.Sprint__c);
-    	else if (story.PointsValue__c != Trigger.oldMap.get(story.Id).PointsValue__c)
-    	    sprintIds.add(story.Sprint__c);
+        if (Trigger.isDelete || Trigger.isInsert)
+            sprintIds.add(story.Sprint__c);
+        else if (story.PointsValue__c != Trigger.oldMap.get(story.Id).PointsValue__c)
+            sprintIds.add(story.Sprint__c);
     }
     
     if (sprintIds.size() == 0)

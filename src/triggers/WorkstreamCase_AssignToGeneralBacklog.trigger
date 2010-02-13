@@ -18,16 +18,16 @@
  */
 
 trigger WorkstreamCase_AssignToGeneralBacklog on WorkstreamCase__c (before insert, before update) {
-	//
-	// Create a list of unassigned workstream cases
-	//
-	
+    //
+    // Create a list of unassigned workstream cases
+    //
+    
     List<WorkstreamCase__c> workstreamCaseList = new List<WorkstreamCase__c>();
     
     for(WorkstreamCase__c workstreamCase : Trigger.new) {
-    	if (workstreamCase.Sprint__c != null)
-    	    continue;
-    	workstreamCaseList.add(workstreamCase);
+        if (workstreamCase.Sprint__c != null)
+            continue;
+        workstreamCaseList.add(workstreamCase);
     }
     
     if (workstreamCaseList.size() == 0)
@@ -73,11 +73,11 @@ trigger WorkstreamCase_AssignToGeneralBacklog on WorkstreamCase__c (before inser
     //
     
     for(WorkstreamCase__c workstreamCase : Trigger.new) {
-    	for(Sprint__c sprint : sprintList) {
-    		if (sprint.Workstream__c != workstreamCase.Workstream__c)
-    		    continue;
-    		workstreamCase.Sprint__c = sprint.Id;
-    	}
+        for(Sprint__c sprint : sprintList) {
+            if (sprint.Workstream__c != workstreamCase.Workstream__c)
+                continue;
+            workstreamCase.Sprint__c = sprint.Id;
+        }
     }
 
 }

@@ -58,7 +58,7 @@ public with sharing class Sprint_ManageCases extends Common_AbstractExtension {
     }
     
     public Boolean getIncludeBacklog() {
-        return includeBacklog;
+        return includeBacklog == null ? false : includeBacklog;
     }
     
     public void unsetIncludeBacklog() {
@@ -76,7 +76,7 @@ public with sharing class Sprint_ManageCases extends Common_AbstractExtension {
 
     // workstream delegate
     public Workstream_ManageCases getWorkstreamDelegate() {
-    	return workstreamDelegate;
+        return workstreamDelegate;
     }
 
     // workstream case list
@@ -105,8 +105,8 @@ public with sharing class Sprint_ManageCases extends Common_AbstractExtension {
         workstreamCaseList = new List<WorkstreamCase__c>();
         
         for (WorkstreamCase__c workstreamCase : getWorkstreamDelegate().getWorkstreamCaseList()) {
-        	system.debug(workstreamCase);
-        	
+            system.debug(workstreamCase);
+            
             if (workstreamCase.Sprint__c == getSprintId())
                 workstreamCaseList.add(workstreamCase);
             if (getIncludeBacklog() && workstreamCase.Sprint__c == getWorkstreamDelegate().GetBacklogSprint().Id)
@@ -321,17 +321,17 @@ public with sharing class Sprint_ManageCases extends Common_AbstractExtension {
             WorkstreamCase__c workstreamCase = getWorkstreamCase(getPageParam('selectedId'));
 
             // add story
-        	Story__c story = new Story__c();
-        	story.Sprint__c = getSprintId();
-        	story.Workstream__c = getSprint().Workstream__c;
-        	story.Name = 'Case ' + workstreamCase.Case__r.CaseNumber + ': ' + workstreamCase.Case__r.Subject;
-        	
-        	// resize name?
-        	if (story.Name.length() > 75)
-        	    story.Name = story.Name.substring(0, 75) + '...';
-        	
-        	insert story;
-        	
+            Story__c story = new Story__c();
+            story.Sprint__c = getSprintId();
+            story.Workstream__c = getSprint().Workstream__c;
+            story.Name = 'Case ' + workstreamCase.Case__r.CaseNumber + ': ' + workstreamCase.Case__r.Subject;
+            
+            // resize name?
+            if (story.Name.length() > 75)
+                story.Name = story.Name.substring(0, 75) + '...';
+            
+            insert story;
+            
             // update case
             workstreamCase.Story__c = story.Id;
             upsert workstreamCase;

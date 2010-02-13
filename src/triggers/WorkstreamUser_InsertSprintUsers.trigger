@@ -18,22 +18,22 @@
  */
 
 trigger WorkstreamUser_InsertSprintUsers on WorkstreamUser__c (after insert, after undelete) {
-	//
-	// Build a list of affected workstreams
-	//
-	
-	Set<Id> workstreamIds = new Set<Id>();
-	
-	for(WorkstreamUser__c workstreamUser : Trigger.new)
-	    workstreamIds.add(workstreamUser.Workstream__c);
-	
-	if (workstreamIds.size() == 0)
-	    return;
-	
-	//
-	// Get a list of target sprints
-	//
-	
+    //
+    // Build a list of affected workstreams
+    //
+    
+    Set<Id> workstreamIds = new Set<Id>();
+    
+    for(WorkstreamUser__c workstreamUser : Trigger.new)
+        workstreamIds.add(workstreamUser.Workstream__c);
+    
+    if (workstreamIds.size() == 0)
+        return;
+    
+    //
+    // Get a list of target sprints
+    //
+    
     List<Sprint__c> sprintList = [
         select Workstream__c
           from Sprint__c
@@ -52,18 +52,18 @@ trigger WorkstreamUser_InsertSprintUsers on WorkstreamUser__c (after insert, aft
     List<SprintUser__c> sprintUserList = new List<SprintUser__c>();
 
     for(WorkstreamUser__c workstreamUser : Trigger.new) {
-    	for(Sprint__c sprint : sprintList) {
-    		if (sprint.Workstream__c != workstreamUser.Workstream__c)
-    		    continue;
-    		
-	    	SprintUser__c sprintUser = new SprintUser__c();
-	    	sprintUser.Availability__c = workstreamUser.Availability__c;
-	    	sprintUser.Sprint__c = sprint.Id;
-	        sprintUser.User__c = workstreamUser.User__c;
-	        sprintUser.WorkstreamRole__c = workstreamUser.WorkstreamRole__c;
-	    	sprintUser.WorkstreamUser__c = workstreamUser.Id;
-	    	sprintUserList.add(sprintUser);
-    	}
+        for(Sprint__c sprint : sprintList) {
+            if (sprint.Workstream__c != workstreamUser.Workstream__c)
+                continue;
+            
+            SprintUser__c sprintUser = new SprintUser__c();
+            sprintUser.Availability__c = workstreamUser.Availability__c;
+            sprintUser.Sprint__c = sprint.Id;
+            sprintUser.User__c = workstreamUser.User__c;
+            sprintUser.WorkstreamRole__c = workstreamUser.WorkstreamRole__c;
+            sprintUser.WorkstreamUser__c = workstreamUser.Id;
+            sprintUserList.add(sprintUser);
+        }
     }
 
     if (sprintUserList.size() == 0)

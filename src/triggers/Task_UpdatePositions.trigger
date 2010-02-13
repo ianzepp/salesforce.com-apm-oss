@@ -39,8 +39,8 @@ trigger Task_UpdatePositions on Task__c (after delete, after insert, after undel
     ];
 
     for (Story__c story : storyList) {
-    	for (Integer p = 0; p < story.Tasks__r.size(); p ++)
-    	   story.Tasks__r[p].Position__c = p + 1;
-    	update story.Tasks__r;
+        for (Integer p = 0; p < story.Tasks__r.size(); p ++)
+           story.Tasks__r[p].Position__c = p + 1;
+        update story.Tasks__r;
     }
 }

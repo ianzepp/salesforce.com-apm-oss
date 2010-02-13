@@ -20,7 +20,7 @@
 <apex:page standardController="Sprint__c" extensions="Sprint_ManageCases">
     <style type="text/css">
 .list .dataRow .dataCell {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 </style>
 

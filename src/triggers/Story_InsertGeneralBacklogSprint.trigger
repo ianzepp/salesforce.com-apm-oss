@@ -21,8 +21,8 @@ trigger Story_InsertGeneralBacklogSprint on Story__c (before insert, before upda
     Set<Id> workstreamIds = new Set<Id>();
     
     for (Story__c story : Trigger.new) {
-    	if (story.Sprint__c != null)
-    	    continue;
+        if (story.Sprint__c != null)
+            continue;
         if (story.Workstream__c == null)
             continue;
         workstreamIds.add(story.Workstream__c);

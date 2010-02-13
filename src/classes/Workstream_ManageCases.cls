@@ -45,23 +45,23 @@ public with sharing class Workstream_ManageCases extends Common_AbstractExtensio
 
     // backlog sprint
     public Sprint__c getBacklogSprint() {
-    	if (backlogSprint == null) try {
-    		backlogSprint = [
-    		    select Name
-    		      from Sprint__c
-    		     where Workstream__c = :getWorkstreamId()
-    		       and IsGeneralBacklog__c = true
-    		     limit 1
-    		];
-    	} catch (System.DmlException dmlException) {
-    		addExceptionMessage(dmlException);
-    	}
-    	
-    	return backlogSprint;
+        if (backlogSprint == null) try {
+            backlogSprint = [
+                select Name
+                  from Sprint__c
+                 where Workstream__c = :getWorkstreamId()
+                   and IsGeneralBacklog__c = true
+                 limit 1
+            ];
+        } catch (System.DmlException dmlException) {
+            addExceptionMessage(dmlException);
+        }
+        
+        return backlogSprint;
     }
 
     public void unsetBacklogSprint() {
-    	backlogSprint = null;
+        backlogSprint = null;
     }
 
     // Workstream case
@@ -226,8 +226,8 @@ public with sharing class Workstream_ManageCases extends Common_AbstractExtensio
         else if (getWorkstreamCase(getPageParam('selectedId')) == null)
             addMessage('No matching story task for that "selectedId" parameter exists in the list of workstream cases: ' + getWorkstreamCaseList());
         else try {
-        	delete getWorkstreamCase(getPageParam('selectedId'));
-        	
+            delete getWorkstreamCase(getPageParam('selectedId'));
+            
             addChangesSavedMessage();
             unsetCachedProperties();        
         } catch (System.DmlException dmlException) {

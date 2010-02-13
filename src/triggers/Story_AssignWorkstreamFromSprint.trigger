@@ -21,11 +21,11 @@ trigger Story_AssignWorkstreamFromSprint on Story__c (before insert, before upda
     Set<Id> sprintIds = new Set<Id>();
     
     for(Story__c story : Trigger.new) {
-    	if (story.Workstream__c != null)
-    	    continue;
-    	if (story.Sprint__c == null)
-    	    continue;
-    	sprintIds.add(story.Sprint__c);
+        if (story.Workstream__c != null)
+            continue;
+        if (story.Sprint__c == null)
+            continue;
+        sprintIds.add(story.Sprint__c);
     }
     
     if (sprintIds.size() == 0)

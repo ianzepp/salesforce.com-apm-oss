@@ -149,26 +149,26 @@ public with sharing class Sprint_ManageTasks extends Common_AbstractExtension {
     
     // selected story task mapping
     public List<Task__c> getSelectedStoryTaskList() {
-    	if (selectedStoryTaskMap.containsKey(getSelectedStoryId()))
-    	    return selectedStoryTaskMap.get(getSelectedStoryId());
-    	
-    	List<Task__c> taskList = new List<Task__c>();
-    	
-    	for(Task__c task : getTaskList()) {
-    	    if (task.Story__c == getSelectedStoryId())
-    	        taskList.add(task);
-    	}
-    	
-    	selectedStoryTaskMap.put(getSelectedStoryId(), taskList);
-    	return taskList;
+        if (selectedStoryTaskMap.containsKey(getSelectedStoryId()))
+            return selectedStoryTaskMap.get(getSelectedStoryId());
+        
+        List<Task__c> taskList = new List<Task__c>();
+        
+        for(Task__c task : getTaskList()) {
+            if (task.Story__c == getSelectedStoryId())
+                taskList.add(task);
+        }
+        
+        selectedStoryTaskMap.put(getSelectedStoryId(), taskList);
+        return taskList;
     }
 
     public Integer getSelectedStoryTaskListSize() {
-    	return getSelectedStoryTaskList().size();
+        return getSelectedStoryTaskList().size();
     }
     
     public void unsetSelectedStoryTaskList() {
-    	selectedStoryTaskMap.clear();
+        selectedStoryTaskMap.clear();
     }
     
     // Fetch that one story
@@ -298,7 +298,7 @@ public with sharing class Sprint_ManageTasks extends Common_AbstractExtension {
             return null;
 
         try {
-        	system.debug('getTaskList() = ' + getTaskList());
+            system.debug('getTaskList() = ' + getTaskList());
             upsert getTaskList();
 
             addChangesSavedMessage();

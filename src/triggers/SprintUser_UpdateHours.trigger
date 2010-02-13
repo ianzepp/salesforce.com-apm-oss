@@ -23,8 +23,8 @@ trigger SprintUser_UpdateHours on SprintUser__c (before update) {
     //
     
     for(SprintUser__c sprintUser : Trigger.new) {
-    	sprintUser.EstimatedHours__c = 0;
-    	sprintUser.ActualHours__c = 0;
+        sprintUser.EstimatedHours__c = 0;
+        sprintUser.ActualHours__c = 0;
     }
     
     //
@@ -34,7 +34,7 @@ trigger SprintUser_UpdateHours on SprintUser__c (before update) {
     Set<Id> sprintIds = new Set<Id>();
     
     for(SprintUser__c sprintUser : Trigger.new)
-    	sprintIds.add(sprintUser.Sprint__c);
+        sprintIds.add(sprintUser.Sprint__c);
     
     //
     // Fetch a list of tasks in that sprint
@@ -55,15 +55,15 @@ trigger SprintUser_UpdateHours on SprintUser__c (before update) {
     //
     
     for(Task__c task : taskList) {
-    	for(SprintUser__c sprintUser : Trigger.new) {
-    		if (sprintUser.Sprint__c != task.Sprint__c)
-    		    continue;
-    		if (sprintUser.Id != task.SprintUser__c)
-    		    continue;
-    		    
-    		sprintUser.EstimatedHours__c += task.EstimatedHours__c;
+        for(SprintUser__c sprintUser : Trigger.new) {
+            if (sprintUser.Sprint__c != task.Sprint__c)
+                continue;
+            if (sprintUser.Id != task.SprintUser__c)
+                continue;
+                
+            sprintUser.EstimatedHours__c += task.EstimatedHours__c;
             sprintUser.ActualHours__c += task.ActualHours__c;
-    	}
+        }
     }
     
 }

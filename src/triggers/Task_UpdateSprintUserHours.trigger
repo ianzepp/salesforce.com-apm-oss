@@ -25,23 +25,23 @@ trigger Task_UpdateSprintUserHours on Task__c (after delete, after insert, after
     Set<Id> sprintUserIds = new Set<Id>();
     
     for(Task__c task : Trigger.isDelete ? Trigger.old : Trigger.new) {
-    	Task__c taskOld = Trigger.isUpdate ? Trigger.oldMap.get(task.Id) : null;  
-    	
-    	if (Trigger.isDelete || Trigger.isInsert)
-    	   sprintUserIds.add(task.SprintUser__c);
-    	   
-    	if (taskOld == null)
-    	   continue;
+        Task__c taskOld = Trigger.isUpdate ? Trigger.oldMap.get(task.Id) : null;  
+        
+        if (Trigger.isDelete || Trigger.isInsert)
+           sprintUserIds.add(task.SprintUser__c);
+           
+        if (taskOld == null)
+           continue;
 
-        // Change in hours?    	      
-    	if (task.EstimatedHours__c != taskOld.EstimatedHours__c)
-    	   sprintUserIds.add(task.SprintUser__c);
+        // Change in hours?              
+        if (task.EstimatedHours__c != taskOld.EstimatedHours__c)
+           sprintUserIds.add(task.SprintUser__c);
         if (task.ActualHours__c != taskOld.ActualHours__c)
            sprintUserIds.add(task.SprintUser__c);
            
         // Change in sprint user? Could be none, one, or both
         if (task.SprintUser__c != taskOld.SprintUser__c && task.SprintUser__c != null)
-       	   sprintUserIds.add(task.SprintUser__c);
+              sprintUserIds.add(task.SprintUser__c);
         if (task.SprintUser__c != taskOld.SprintUser__c && taskOld.SprintUser__c != null)
            sprintUserIds.add(taskOld.SprintUser__c);
     }

@@ -3,8 +3,23 @@
     <fullName>Agile Process Management %28OSS%29</fullName>
     <apiAccessLevel>Unrestricted</apiAccessLevel>
     <types>
-        <members>Sprint_ManageTasksTest</members>
-        <name>ApexClass</name>
+        <members>Sprint_ManageCases</members>
+        <members>Sprint_ManageTaskboard</members>
+        <members>Workstream_ManageCases</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>SprintUser_UpdateHours</members>
+        <members>Story_AssignWorkstreamFromSprint</members>
+        <members>Story_InsertGeneralBacklogSprint</members>
+        <members>Story_UpdateSprintPoints</members>
+        <members>Task_SetStatusInProgress</members>
+        <members>Task_UpdatePositions</members>
+        <members>Task_UpdateSprintUserHours</members>
+        <members>WorkstreamCase_AssignToGeneralBacklog</members>
+        <members>WorkstreamUser_InsertSprintUsers</members>
+        <members>WorkstreamUser_UpdateSprintUserRoles</members>
+        <name>ApexTrigger</name>
     </types>
     <version>16.0</version>
 </Package>

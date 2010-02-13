@@ -20,7 +20,7 @@
 <apex:page standardController="Workstream__c" extensions="Workstream_ManageCases">
     <style type="text/css">
 .list .dataRow .dataCell {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 </style>
 

@@ -130,19 +130,19 @@
     </script>
     <style type="text/css">
 .headerWrapper .header {
-	background-color: #cccccc;
-	width: 25%;
-	padding: 1em;
-	text-align: center;
-	font-weight: bold;
+    background-color: #cccccc;
+    width: 25%;
+    padding: 1em;
+    text-align: center;
+    font-weight: bold;
 }
 
 .storyWrapper .column {
-	width: 25%;
+    width: 25%;
 }
 
 .storyWrapper .mouseoverButton {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 .storyWrapper .task {
@@ -161,8 +161,8 @@
 }
 
 .storyWrapper .task .name {
-	font-weight: bold;
-	font-size: 110%;
+    font-weight: bold;
+    font-size: 110%;
     padding: 1.0em;
 }
 
