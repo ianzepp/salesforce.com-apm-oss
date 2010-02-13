@@ -479,7 +479,7 @@ private with sharing class Sprint_ManageTasksTest {
         sprintController.unsetCachedProperties();
 
         sprintController.saveTaskListAndInsert();
-        system.assertEquals(0, sprintController.getSelectedStoryTaskListSize());
+        system.assertEquals(1, sprintController.getSelectedStoryTaskListSize());
 
         sprintController.cancelInsertTask();
         system.assertEquals(0, sprintController.getSelectedStoryTaskListSize());

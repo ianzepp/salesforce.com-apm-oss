@@ -164,9 +164,7 @@ public with sharing class Sprint_ManageTasks extends Common_AbstractExtension {
     }
 
     public Integer getSelectedStoryTaskListSize() {
-    	if (selectedStoryTaskMap.containsKey(getSelectedStoryId()))
-    	    return selectedStoryTaskMap.get(getSelectedStoryId()).size();
-    	return 0;
+    	return getSelectedStoryTaskList().size();
     }
     
     public void unsetSelectedStoryTaskList() {
