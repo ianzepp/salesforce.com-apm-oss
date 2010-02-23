@@ -129,14 +129,6 @@
         <type>MasterDetail</type>
     </fields>
     <fields>
-        <fullName>UserRole__c</fullName>
-        <label>User Role (Obsolete)</label>
-        <referenceTo>UserRole__c</referenceTo>
-        <relationshipLabel>Sprint Users (Obsolete)</relationshipLabel>
-        <relationshipName>Sprint_Users</relationshipName>
-        <type>Lookup</type>
-    </fields>
-    <fields>
         <fullName>User__c</fullName>
         <label>User</label>
         <referenceTo>User</referenceTo>

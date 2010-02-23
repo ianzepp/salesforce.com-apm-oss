@@ -298,15 +298,6 @@ IF (TotalTasks__c &gt; 0, TEXT (TotalTasks__c), &apos;-&apos;)</formula>
         <type>Summary</type>
     </fields>
     <fields>
-        <fullName>UserRole__c</fullName>
-        <label>Stakeholder Role (Obsolete)</label>
-        <referenceTo>UserRole__c</referenceTo>
-        <relationshipLabel>Stories (Obsolete)</relationshipLabel>
-        <relationshipName>Stories</relationshipName>
-        <trackHistory>true</trackHistory>
-        <type>Lookup</type>
-    </fields>
-    <fields>
         <fullName>WorkstreamRole__c</fullName>
         <label>Stakeholder Role</label>
         <referenceTo>WorkstreamRole__c</referenceTo>

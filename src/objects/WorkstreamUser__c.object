@@ -76,14 +76,6 @@
         <type>Text</type>
     </fields>
     <fields>
-        <fullName>UserRole__c</fullName>
-        <label>User Role (Obsolete)</label>
-        <referenceTo>UserRole__c</referenceTo>
-        <relationshipLabel>Workstream Users</relationshipLabel>
-        <relationshipName>WorkstreamUsers</relationshipName>
-        <type>Lookup</type>
-    </fields>
-    <fields>
         <fullName>User__c</fullName>
         <label>User</label>
         <referenceTo>User</referenceTo>

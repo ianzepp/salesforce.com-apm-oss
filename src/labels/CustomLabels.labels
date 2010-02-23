@@ -148,13 +148,6 @@
         <value>Manage Tasks</value>
     </labels>
     <labels>
-        <fullName>Sprint_ManageUsers</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Sprint_ManageUsers</shortDescription>
-        <value>Manage Users</value>
-    </labels>
-    <labels>
         <fullName>Workstream_AssignCaseToWorkstream</fullName>
         <language>en_US</language>
         <protected>true</protected>
