@@ -4,14 +4,54 @@
     <apiAccessLevel>Unrestricted</apiAccessLevel>
     <types>
         <members>Common_AbstractExtension</members>
+        <members>Common_AbstractExtensionTest</members>
+        <members>SprintUser_RedirectToManage</members>
+        <members>SprintUser_RedirectToManageTest</members>
+        <members>SprintUser_SetIsInlineEditUncheckedTest</members>
+        <members>SprintUser_UpdateSprintTaskableHoursTest</members>
         <members>Sprint_ManageCases</members>
+        <members>Sprint_ManageCasesTest</members>
         <members>Sprint_ManageStories</members>
+        <members>Sprint_ManageStoriesTest</members>
         <members>Sprint_ManageTasks</members>
+        <members>Sprint_ManageTasksTest</members>
         <members>Sprint_ManageUsers</members>
+        <members>Sprint_ManageUsersTest</members>
+        <members>Sprint_SetTaskStatusCompletedTest</members>
+        <members>Sprint_SetTaskStatusInProgressTest</members>
+        <members>Sprint_SetTaskStatusNotYetStartedTest</members>
+        <members>Story_AssignTasksToSprintTest</members>
         <members>Story_RedirectToManageTasks</members>
+        <members>Story_RedirectToManageTasksTest</members>
+        <members>Story_SetTaskStatusBlockedTest</members>
+        <members>Story_SetTaskStatusCompletedTest</members>
+        <members>Story_SetTaskStatusInProgressTest</members>
+        <members>Story_SetTaskStatusNotYetStartedTest</members>
+        <members>Story_SetTaskStatusNotYetTaskedTest</members>
+        <members>Story_UnsetIsInlineEditTest</members>
+        <members>Story_ValidationRuleTest</members>
+        <members>Task_DeleteTimeEntriesTest</members>
+        <members>Task_InsertTimeEntriesTest</members>
+        <members>Task_SetPositionOnCreateTest</members>
+        <members>Task_SetStatusInProgressTest</members>
+        <members>Task_UnsetIsBlockedTest</members>
+        <members>Task_UnsetIsInlineEditTest</members>
+        <members>WorkstreamCase_RedirectToManage</members>
+        <members>WorkstreamCase_RedirectToManageTest</members>
+        <members>WorkstreamRole_UnsetIsInlineEditTest</members>
+        <members>WorkstreamUser_DeleteSprintUsersTest</members>
+        <members>WorkstreamUser_InsertSprintUsersTest</members>
+        <members>WorkstreamUser_RedirectToManage</members>
+        <members>WorkstreamUser_RedirectToManageTest</members>
+        <members>WorkstreamUser_UpdateSprintUserRolesTest</members>
+        <members>Workstream_DeleteSprintsTest</members>
+        <members>Workstream_DeleteStoriesTest</members>
         <members>Workstream_ManageCases</members>
+        <members>Workstream_ManageCasesTest</members>
         <members>Workstream_ManageRoles</members>
+        <members>Workstream_ManageRolesTest</members>
         <members>Workstream_ManageUsers</members>
+        <members>Workstream_ManageUsersTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -21,11 +61,15 @@
     </types>
     <types>
         <members>Analytics_SprintBurndown</members>
+        <members>SprintUser_RedirectToManage</members>
         <members>Sprint_ManageCases</members>
         <members>Sprint_ManageStories</members>
         <members>Sprint_ManageTaskboard</members>
         <members>Sprint_ManageTasks</members>
+        <members>Sprint_ManageUsers</members>
         <members>Story_RedirectToManageTasks</members>
+        <members>WorkstreamCase_RedirectToManage</members>
+        <members>WorkstreamUser_RedirectToManage</members>
         <members>Workstream_ManageCases</members>
         <members>Workstream_ManageRoles</members>
         <members>Workstream_ManageUsers</members>
@@ -177,11 +221,6 @@
         <members>Time__c.Task__c</members>
         <members>Time__c.User__c</members>
         <members>Time__c.WorkstreamUser__c</members>
-        <members>UserRole__c.Description__c</members>
-        <members>UserRole__c.IsActive__c</members>
-        <members>UserRole__c.IsGlobal__c</members>
-        <members>UserRole__c.IsInlineEdit__c</members>
-        <members>UserRole__c.Workstream__c</members>
         <members>WorkstreamCase__c.CaseNumber__c</members>
         <members>WorkstreamCase__c.Case__c</members>
         <members>WorkstreamCase__c.Priority__c</members>
@@ -238,6 +277,7 @@
         <members>Sprint_ManageStories</members>
         <members>Sprint_ManageTaskboard</members>
         <members>Sprint_ManageTasks</members>
+        <members>Sprint_ManageUsers</members>
         <members>Workstream_AssignCaseToWorkstream</members>
         <members>Workstream_ExistingRoles</members>
         <members>Workstream_IsNotActive</members>
@@ -259,7 +299,6 @@
         <members>Story__c</members>
         <members>Task__c</members>
         <members>Time__c</members>
-        <members>UserRole__c</members>
         <members>WorkstreamCase__c</members>
         <members>WorkstreamRole__c</members>
         <members>WorkstreamUser__c</members>
@@ -278,7 +317,6 @@
         <members>Story__c-Story Layout</members>
         <members>Task__c-Task Layout</members>
         <members>Time__c-Time Layout</members>
-        <members>UserRole__c-User Role %28Obsolete%29 Layout</members>
         <members>WorkstreamCase__c-Workstream Case Layout</members>
         <members>WorkstreamRole__c-Workstream Role Layout</members>
         <members>WorkstreamUser__c-Workstream User Layout</members>
