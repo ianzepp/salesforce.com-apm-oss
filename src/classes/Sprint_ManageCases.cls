@@ -203,9 +203,7 @@ public with sharing class Sprint_ManageCases extends Common_AbstractExtension {
     
     // Page actions
     public PageReference assignWorkstreamCase() {
-        if (getSprintId() == null)
-            addMessage('Internal Error: Sprint ID is null.');
-        else if (getPageParam('selectedId') == null)
+        if (getPageParam('selectedId') == null)
             addMessage('Internal Error: required parameter "selectedId" is missing');
         else if (getWorkstreamCase(getPageParam('selectedId')) == null)
             addMessage('Internal Error: no matching workstream case for that "selectedId" parameter exists in the list of workstream cases: ' + getWorkstreamCaseList());
@@ -233,11 +231,7 @@ public with sharing class Sprint_ManageCases extends Common_AbstractExtension {
     }
     
     public PageReference insertWorkstreamCase() {
-        if (getSprintId() == null)
-            addMessage('Sprint ID is null');
-        else if (getSprint() == null)
-            addMessage('Sprint is null');
-        else if (getSprint().Workstream__c == null)
+        if (getSprint().Workstream__c == null)
             addMessage('Sprint.Workstream__c ID is null');
         else if (getNewWorkstreamCase() == null)
             addMessage('New WorkstreamCase ID is null');  
