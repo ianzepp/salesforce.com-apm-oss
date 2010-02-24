@@ -17,6 +17,7 @@
         <members>Sprint_ManageTasksTest</members>
         <members>Sprint_ManageUsers</members>
         <members>Sprint_ManageUsersTest</members>
+        <members>Sprint_SetStatusNotYetStartedTest</members>
         <members>Sprint_SetTaskStatusCompletedTest</members>
         <members>Sprint_SetTaskStatusInProgressTest</members>
         <members>Sprint_SetTaskStatusNotYetStartedTest</members>
